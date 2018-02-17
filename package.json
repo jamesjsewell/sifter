@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/jamesjsewell/sifter#readme",
   "devDependencies": {
+    "connect": "^3.6.6",
     "express": "^4.16.2"
   }
 }
