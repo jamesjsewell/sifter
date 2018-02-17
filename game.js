@@ -81,51 +81,7 @@ var game = new Phaser.Game({
         this.scoreText = game.add.text(650, 0, "score: 0", { font: "18px Arial", fill: "#ffffff", align: "right" });
         this.scoreText.fixedToCamera = true;
         this.scoreText.cameraOffset.setTo(650, 0);
-        //pause menu
-        var w = 800, h = 600;
-        // Create a label to use as a button
-        this.pause_label = game.add.text(w - 100, 20, 'Pause', { font: '24px Arial', fill: '#fff' });
-        this.pause_label.inputEnabled = true;
-        this.pause_label.events.onInputUp.add(function () {
-            // When the paus button is pressed, we pause the game
-            game.paused = true;
-            // Then add the menu
-            this.menu = game.add.sprite(w/2, h/2, 'menu');
-            this.menu.anchor.setTo(0.5, 0.5);
-            // And a label to illustrate which menu item was chosen. (This is not necessary)
-            this.choiceLabel = game.add.text(w/2, h-150, 'Click outside menu to continue', { font: '30px Arial', fill: '#fff' });
-            this.choiceLabel.anchor.setTo(0.5, 0.5);
-        });
-        // Add a input listener that can help us return from being paused
-        game.input.onDown.add(unpause, self);
-        // And finally the method that handels the pause menu
-        function unpause(event){
-            // Only act if paused
-            if(game.paused){
-                // Calculate the corners of the menu
-                var x1 = w/2 - 270/2, x2 = w/2 + 270/2,
-                    y1 = h/2 - 180/2, y2 = h/2 + 180/2;
-                // Check if the click was inside the menu
-                if(event.x > x1 && event.x < x2 && event.y > y1 && event.y < y2 ){
-                    // The choicemap is an array that will help us see which item was clicked
-                    var choisemap = ['one', 'two', 'three', 'four', 'five', 'six'];
-                    // Get menu local coordinates for the click
-                    var x = event.x - x1,
-                        y = event.y - y1;
-                    // Calculate the choice 
-                    var choise = Math.floor(x / 90) + 3*Math.floor(y / 90);
-                    // Display the choice
-                    choiceLabel.text = 'You chose menu item: ' + choisemap[choise];
-                }
-                else{
-                    // Remove the menu and the label
-                    menu.destroy();
-                    choiceLabel.destroy();
-                    // Unpause the game
-                    game.paused = false;
-                }
-            }
-        }
+        
 
         //move sprite to cursor
         this.seeker = game.add.sprite(400, 300, '.assets/diamond.png');
@@ -178,11 +134,65 @@ var game = new Phaser.Game({
 
           //seeker
           this.seeker.rotation = game.physics.arcade.moveToPointer(this.seeker, 60, game.input.activePointer, 500);
+
+          //pause menu
+          this.pause_menu()
       },
       render: function(){
           var debug = this.game.debug;
           debug.scale(20, 20, '#fff');
           debug.phaser(10, 580);
+      },
+      pause_menu: function(){
+
+        //pause menu
+        var w = 800, h = 600;
+        // Create a label to use as a button
+        this.pause_label = game.add.text(w - 100, 20, 'Pause', { font: '24px Arial', fill: '#fff' });
+        this.pause_label.inputEnabled = true;
+        this.pause_label.fixedToCamera = true;
+        this.pause_label.cameraOffset.setTo(325, 0);
+        this.pause_label.events.onInputUp.add(function () {
+            // When the paus button is pressed, we pause the game
+            game.paused = true;
+            // Then add the menu
+            this.menu = game.add.sprite(w/2, h/2, 'menu');
+            this.menu.anchor.setTo(0.5, 0.5);
+            // And a label to illustrate which menu item was chosen. (This is not necessary)
+            this.choiceLabel = game.add.text(w/2, h-150, 'Click outside menu to continue', { font: '30px Arial', fill: '#fff' });
+            this.choiceLabel.anchor.setTo(0.5, 0.5);
+        });
+        // Add a input listener that can help us return from being paused
+        game.input.onDown.add(unpause, self);
+        // And finally the method that handels the pause menu
+        function unpause(event){
+            // Only act if paused
+            if(game.paused){
+                // Calculate the corners of the menu
+                var x1 = w/2 - 270/2, x2 = w/2 + 270/2,
+                    y1 = h/2 - 180/2, y2 = h/2 + 180/2;
+                // Check if the click was inside the menu
+                if(event.x > x1 && event.x < x2 && event.y > y1 && event.y < y2 ){
+                    // The choicemap is an array that will help us see which item was clicked
+                    var choiceMap = ['one', 'two', 'three', 'four', 'five', 'six'];
+                    // Get menu local coordinates for the click
+                    var x = event.x - x1,
+                        y = event.y - y1;
+                    // Calculate the choice 
+                    var choice = Math.floor(x / 90) + 3*Math.floor(y / 90);
+                    // Display the choice
+                    choiceLabel.text = 'You chose menu item: ' + choiceMap[choice];
+                }
+                else{
+                    // Remove the menu and the label
+                    menu.destroy();
+                    choiceLabel.destroy();
+                    // Unpause the game
+                    game.paused = false;
+                }
+            }
+        }
+
       },
       collectStar: function(player, star) {
           // Removes the star from the screen
@@ -196,3 +206,7 @@ var game = new Phaser.Game({
     }
     
   })
+
+  
+
+
