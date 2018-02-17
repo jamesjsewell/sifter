@@ -24,6 +24,7 @@ var game = new Phaser.Game({
           this.game.load.image('ground', 'assets/platform.png');
           this.game.load.image('star', 'assets/star.png');
           this.game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
+          game.load.image('menu', 'assets/number-buttons-90x90.png', 270, 180);
       },
       create: function() {
           
@@ -137,6 +138,7 @@ var game = new Phaser.Game({
 
           //seeker
           this.seeker.rotation = game.physics.arcade.moveToPointer(this.seeker, 60, game.input.activePointer, 500);
+          
       },
       render: function(){
           var debug = this.game.debug;
@@ -157,10 +159,15 @@ var game = new Phaser.Game({
             game.paused = true;
             // Then add the menu
             this.menu = game.add.sprite(w/2, h/2, 'menu');
-            this.menu.anchor.setTo(0.5, 0.5);
+
             // And a label to illustrate which menu item was chosen. (This is not necessary)
             this.choiceLabel = game.add.text(w/2, h-150, 'Click outside menu to continue', { font: '30px Arial', fill: '#fff' });
-            this.choiceLabel.anchor.setTo(0.5, 0.5);
+            this.menu.x = this.game.camera.x + w/2 - ( 270/2 )
+            this.menu.y = this.game.camera.y + h/2 - ( 180/2 )
+    
+            this.choiceLabel.x = this.menu.x 
+            this.choiceLabel.y = this.menu.y + h/3.5
+
         });
         // Add a input listener that can help us return from being paused
         game.input.onDown.add(unpause, self);
@@ -182,6 +189,7 @@ var game = new Phaser.Game({
                     var choice = Math.floor(x / 90) + 3*Math.floor(y / 90);
                     // Display the choice
                     choiceLabel.text = 'You chose menu item: ' + choiceMap[choice];
+                    
                 }
                 else{
                     // Remove the menu and the label
