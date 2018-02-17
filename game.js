@@ -93,6 +93,9 @@ var game = new Phaser.Game({
         //  Tell it we don't want physics to manage the rotation
         this.seeker.body.allowRotation = false;
 
+        //pause menu
+        this.pause_menu()
+
       },
       update: function() {
           game.world.setBounds(0, 0, 1920, 1920);
@@ -134,9 +137,6 @@ var game = new Phaser.Game({
 
           //seeker
           this.seeker.rotation = game.physics.arcade.moveToPointer(this.seeker, 60, game.input.activePointer, 500);
-
-          //pause menu
-          this.pause_menu()
       },
       render: function(){
           var debug = this.game.debug;
