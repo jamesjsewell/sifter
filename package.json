@@ -1,0 +1,28 @@
+{
+  "name": "sifter",
+  "version": "1.0.0",
+  "description": "welcome to sifter, this application is meant to test the aptitude of prospective mine controllers who will be working from the IROC. The IROC is a sort of \"mission control\" for BHP mining operations in Perth, Australia and expanding.",
+  "main": "boilerplate_game_code.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jamesjsewell/sifter.git"
+  },
+  "keywords": [
+    "bhp",
+    "unearthed",
+    "digital",
+    "tribes"
+  ],
+  "author": "james sewell",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jamesjsewell/sifter/issues"
+  },
+  "homepage": "https://github.com/jamesjsewell/sifter#readme",
+  "devDependencies": {
+    "express": "^4.16.2"
+  }
+}
