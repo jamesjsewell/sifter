@@ -20,23 +20,26 @@ var game = new Phaser.Game({
        
       },
       preload: function() {
-          this.game.load.image('sky', 'assets/sky.png');
-          this.game.load.image('ground', 'assets/platform.png');
-          this.game.load.image('star', 'assets/star.png');
-          this.game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
+          game.load.image('sky', 'assets/sky.png');
+          game.load.image('ground', 'assets/platform.png');
+          game.load.image('star', 'assets/star.png');
+          game.load.spritesheet('dude', 'assets/dude.png', 32, 48);
+          game.load.spritesheet('resumeButton', 'assets/pause_menu/resume_button.png', 32, 32);
+          game.load.spritesheet('pauseButton', 'assets/pause_menu/pause_button.png', 32, 32);
           game.load.image('menu', 'assets/number-buttons-90x90.png', 270, 180);
+          
       },
       create: function() {
           
         cursors = this.game.input.keyboard.createCursorKeys();
         
         //  We're going to be using physics, so enable the Arcade Physics system
-        this.game.physics.startSystem(Phaser.Physics.ARCADE);
+        game.physics.startSystem(Phaser.Physics.ARCADE);
         //  A simple background for our game
-        this.game.add.sprite(0, 0, 'sky');
+        game.add.sprite(0, 0, 'sky');
         //  The platforms group contains the ground and the 2 ledges we can jump on
-        this.platforms = this.game.add.group();
-        //  We will enable physics for any object that is created in this group
+        this.platforms = game.add.group();
+        //  We will enable physics for any object that is created in group
         this.platforms.enableBody = true;
         // Here we create the ground.
         this.ground = this.platforms.create(0, this.game.world.height - 64, 'ground');
@@ -149,59 +152,89 @@ var game = new Phaser.Game({
 
         //pause menu
         var w = 800, h = 600;
-        // Create a label to use as a button
-        this.pause_label = game.add.text(w - 100, 20, 'Pause', { font: '24px Arial', fill: '#fff' });
-        this.pause_label.inputEnabled = true;
-        this.pause_label.fixedToCamera = true;
-        this.pause_label.cameraOffset.setTo(325, 0);
-        this.pause_label.events.onInputUp.add(function () {
+         
+        add_pause_button()
+
+        function paused(){
+
             // When the paus button is pressed, we pause the game
             game.paused = true;
+            this.pause_button.destroy();
             // Then add the menu
             this.menu = game.add.sprite(w/2, h/2, 'menu');
+            var xPos = game.camera.x
+            var yPos = game.camera.y
 
             // And a label to illustrate which menu item was chosen. (This is not necessary)
             this.choiceLabel = game.add.text(w/2, h-150, 'Click outside menu to continue', { font: '30px Arial', fill: '#fff' });
+            this.menu.x = xPos + w/2 - ( 270/2 )
+            this.menu.y = yPos + h/2 - ( 180/2 )
+
             this.menu.x = this.game.camera.x + w/2 - ( 270/2 )
             this.menu.y = this.game.camera.y + h/2 - ( 180/2 )
-    
+
             this.choiceLabel.x = this.menu.x 
             this.choiceLabel.y = this.menu.y + h/3.5
 
-        });
-        // Add a input listener that can help us return from being paused
-        game.input.onDown.add(unpause, self);
-        // And finally the method that handels the pause menu
-        function unpause(event){
-            // Only act if paused
-            if(game.paused){
-                // Calculate the corners of the menu
-                var x1 = w/2 - 270/2, x2 = w/2 + 270/2,
-                    y1 = h/2 - 180/2, y2 = h/2 + 180/2;
-                // Check if the click was inside the menu
-                if(event.x > x1 && event.x < x2 && event.y > y1 && event.y < y2 ){
-                    // The choicemap is an array that will help us see which item was clicked
-                    var choiceMap = ['one', 'two', 'three', 'four', 'five', 'six'];
-                    // Get menu local coordinates for the click
-                    var x = event.x - x1,
-                        y = event.y - y1;
-                    // Calculate the choice 
-                    var choice = Math.floor(x / 90) + 3*Math.floor(y / 90);
-                    // Display the choice
-                    choiceLabel.text = 'You chose menu item: ' + choiceMap[choice];
-                    
-                }
-                else{
-                    // Remove the menu and the label
-                    menu.destroy();
-                    choiceLabel.destroy();
-                    // Unpause the game
-                    game.paused = false;
+            this.resume_button = game.add.button(game.world.centerX, game.world.centerY, 'resumeButton', unpause, this, 1, 0, 2);
+            this.resume_button.x = xPos + w/2 - 32
+            this.resume_button.y = yPos + 20
+
+
+            game.input.onDown.add(menuClick, self);
+            // And finally the method that handels the pause menu
+        
+            function menuClick(event){
+
+                console.log(event)
+                
+                // Only act if paused
+                if(game.paused){
+                    // Calculate the corners of the menu
+                    var x1 = w/2 - 270/2, x2 = w/2 + 270/2,
+                        y1 = h/2 - 180/2, y2 = h/2 + 180/2;
+                    // Check if the click was inside the menu
+                    if(event.x > x1 && event.x < x2 && event.y > y1 && event.y < y2 ){
+                        // The choicemap is an array that will help us see which item was clicked
+                        var choiceMap = ['one', 'two', 'three', 'four', 'five', 'six'];
+                        // Get menu local coordinates for the click
+                        var x = event.x - x1,
+                            y = event.y - y1;
+                        // Calculate the choice 
+                        var choice = Math.floor(x / 90) + 3*Math.floor(y / 90);
+                        // Display the choice
+                        choiceLabel.text = 'You chose menu item: ' + choiceMap[choice];
+                        
+                    }
+                
                 }
             }
+            
+            function unpause(event){
+
+                this.resume_button.setFrames(0, 1, 2);
+                // Only act if paused
+                if(game.paused){
+
+                    // Remove the menu and the label
+                    this.menu.destroy();
+                    this.choiceLabel.destroy();
+                    this.resume_button.destroy();
+                    game.paused = false;
+                    add_pause_button()
+                                      
+                }
+        
+            } 
+            
         }
 
-      },
+        function add_pause_button(){
+            this.pause_button = game.add.button(game.world.centerX, game.world.centerY, 'pauseButton', paused, this, 1, 0, 2)
+            this.pause_button.fixedToCamera = true
+            this.pause_button.cameraOffset.setTo(w/2-32, 20);
+        }
+    },
       collectStar: function(player, star) {
           // Removes the star from the screen
           star.kill();
