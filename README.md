@@ -2,7 +2,7 @@
 
 Sifter is an application produced by a small team of five developers. We aimed to make an aptitude test for remote controllers disguised as a game. Research has suggested that gamifying the learning process can help make material more enjoyable and also cause a deeper level of understanding. 
 
-This app is written in Javascript and is therefore compatible with all modern web browsers. We have written the code to be lightweight so it can can be quickly and easily adapted to work with smaller devices such as tablets and mobile screens
+This app is written in Javascript and is therefore compatible with all modern web browsers. We have written the code to be lightweight so it can can be quickly and easily adapted to work with smaller devices such as tablets and mobile screens.
 
 When you use game-based assessments as part of your recruitment process, you’re not only identifying the best candidates quickly, accurately, and enjoyably. You’re also telling your prospective employees that you’re an innovative employer and that you care about the experience your candidates go through to become a part of your team. Candidates become immersed in the games and forget they’re completing an assessment, which means they’re less stressed, providing you with more authentic data about their performance.
 
