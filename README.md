@@ -21,3 +21,6 @@ Patrick Hildreth
 ## License
 
 This project is licensed under the MIT License.
+
+technical stuff:
+https://code.lengstorf.com/learn-rollup-js/ using this for my build step
