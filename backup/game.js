@@ -31,7 +31,7 @@ var game = new Phaser.Game({
       },
       create: function() {
           
-        cursors = this.game.input.keyboard.createCursorKeys();
+        this.cursors = this.game.input.keyboard.createCursorKeys();
         
         //  We're going to be using physics, so enable the Arcade Physics system
         game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -112,13 +112,13 @@ var game = new Phaser.Game({
           var hitPlatform = this.game.physics.arcade.collide(this.player, this.platforms);
           //  Reset the players velocity (movement)
           this.player.body.velocity.x = 0;
-          if (cursors.left.isDown)
+          if (this.cursors.left.isDown)
           {
               //  Move to the left
               this.player.body.velocity.x = -150;
               this.player.animations.play('left');
           }
-          else if (cursors.right.isDown)
+          else if (this.cursors.right.isDown)
           {
               //  Move to the right
               this.player.body.velocity.x = 150;
@@ -131,7 +131,7 @@ var game = new Phaser.Game({
               this.player.frame = 4;
           }
           //  Allow the player to jump if they are touching the ground.
-          if (cursors.up.isDown && this.player.body.touching.down && hitPlatform)
+          if (this.cursors.up.isDown && this.player.body.touching.down && hitPlatform)
           {
               this.player.body.velocity.y = -350;
           }
@@ -185,8 +185,6 @@ var game = new Phaser.Game({
             // And finally the method that handels the pause menu
         
             function menuClick(event){
-
-                console.log(event)
                 
                 // Only act if paused
                 if(game.paused){
@@ -246,7 +244,9 @@ var game = new Phaser.Game({
       
     }
     
+    
   })
+
 
   
 
