@@ -11,8 +11,8 @@ class Scene1 extends Phaser.State {
         this.theGame.load.image('ground', './assets/images/platform.png');
         this.theGame.load.image('star', './assets/images/star.png');
         this.theGame.load.spritesheet('dude', './assets/images/dude.png', 32, 48);
-        this.theGame.load.spritesheet('resumeButton', './assets/images/pause_menu/resume_button.png', 32, 32);
-        this.theGame.load.spritesheet('pauseButton', './assets/images/pause_menu/pause_button.png', 32, 32);
+        this.theGame.load.spritesheet('resumeButton', './assets/pause_menu/resume_button.png', 32, 32);
+        this.theGame.load.spritesheet('pauseButton', './assets/pause_menu/pause_button.png', 32, 32);
         this.theGame.load.image('menu', './assets/images/number-buttons-90x90.png', 270, 180);
         
     }
