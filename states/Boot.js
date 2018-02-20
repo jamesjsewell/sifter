@@ -1,0 +1,91 @@
+import GameMenu from "./GameMenu"
+import Game from "./Game"
+import GameOver from "./GameOver"
+import Credits from "./Credits"
+import Options from "./Options"
+
+class Boot extends Phaser.State {
+
+    init() {
+        this.theGame = this.game.state.game
+        this.addedStates = false
+        this.theGame.load.onLoadStart.add(this.loadStart, this);
+        this.theGame.load.onFileComplete.add(this.fileComplete, this);
+        this.theGame.load.onLoadComplete.add(this.loadComplete, this);
+        
+    }
+
+    preload() {
+        this.theGame.load.image('sky', './assets/images/sky.png');
+        this.theGame.load.image('ground', './assets/images/platform.png');
+        this.theGame.load.image('star', './assets/images/star.png');
+        this.theGame.load.spritesheet('dude', './assets/images/dude.png', 32, 48);
+        this.theGame.load.spritesheet('resumeButton', './assets/pause_menu/resume_button.png', 32, 32);
+        this.theGame.load.spritesheet('pauseButton', './assets/pause_menu/pause_button.png', 32, 32);
+        this.theGame.load.image('menu', './assets/images/number-buttons-90x90.png', 270, 180);
+        
+    }
+
+    create() {
+
+        this.addGameStates();
+        this.addGameMusic();
+        //  Register the keys.
+	    this.leftKey = this.theGame.input.keyboard.addKey(Phaser.Keyboard.LEFT);
+	    this.rightKey = this.theGame.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
+	    this.spaceKey = this.theGame.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+
+        //  Stop the following keys from propagating up to the browser
+        this.theGame.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.SPACEBAR ]);
+    }
+
+    update(){
+
+        if (this.leftKey.isDown && this.addedStates)
+        {
+            this.theGame.state.start("GameMenu");
+            
+        } 
+
+    }
+
+    addGameStates(){
+
+        this.theGame.state.add("GameMenu",GameMenu);
+        this.theGame.state.add("Game",Game);
+        this.theGame.state.add("GameOver",GameOver);
+        this.theGame.state.add("Credits",Credits);
+        this.theGame.state.add("Options",Options);
+
+        this.addedStates = true
+    }
+    
+    addGameMusic(){
+        // music = game.add.audio('dangerous');
+        // music.loop = true;
+        // music.play();
+    }
+
+    loadStart() {
+
+        console.log('loading')
+    
+    }
+    
+   
+    fileComplete(progress, cacheKey, success, totalLoaded, totalFiles) {
+        //http://phaser.io/examples/v2/loader/load-events
+        // text.setText("File Complete: " + progress + "% - " + totalLoaded + " out of " + totalFiles);
+        console.log(progress)
+    
+    }
+    
+    loadComplete(){
+    
+        console.log('alldone')
+    
+    }
+ 
+}
+
+export default Boot
