@@ -1,4 +1,4 @@
-class Scene2 extends Phaser.State {
+class Credits extends Phaser.State {
 
     init() {
         this.theGame = this.game.state.game
@@ -146,8 +146,6 @@ class Scene2 extends Phaser.State {
         
         add_pause_button(this)
 
-        console.log(this.theGame)
-
         var self = this
 
         function paused(){
@@ -241,4 +239,4 @@ class Scene2 extends Phaser.State {
  
 }
 
-export default Scene2
+export default Credits

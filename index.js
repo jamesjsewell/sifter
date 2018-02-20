@@ -3,7 +3,7 @@
 // import GameTitle from 'states/GameTitle';
 // import Main from 'states/Main';
 // import GameOver from 'states/GameOver';
-import Scene1 from './states/Scene1'
+import Boot from './states/Boot'
 
 class Game extends Phaser.Game {
  
@@ -21,8 +21,8 @@ class Game extends Phaser.Game {
             scaleMode: Phaser.ScaleManager.SHOW_ALL,
             antialias: true });
         
-        this.state.add('Scene1', Scene1, false);
-        this.state.start('Scene1');
+        this.state.add('Boot', Boot, false);
+        this.state.start('Boot');
     }
  
 }
