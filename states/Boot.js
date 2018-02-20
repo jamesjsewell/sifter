@@ -23,10 +23,17 @@ class Boot extends Phaser.State {
         this.theGame.load.spritesheet('resumeButton', './assets/pause_menu/resume_button.png', 32, 32);
         this.theGame.load.spritesheet('pauseButton', './assets/pause_menu/pause_button.png', 32, 32);
         this.theGame.load.image('menu', './assets/images/number-buttons-90x90.png', 270, 180);
-        
+        this.theGame.load.bitmapFont('carrier_command', 'assets/fonts/carrier_command.png', 'assets/fonts/carrier_command.xml');
+        this.theGame.load.bitmapFont('gem', 'assets/fonts/gem.png', 'assets/fonts/gem.xml');
     }
 
     create() {
+
+        this.bmpText = this.theGame.add.bitmapText(10, 100, 'gem','LOADING...',34);
+
+        // bmpText.inputEnabled = true;
+
+        // bmpText.input.enableDrag();
 
         this.addGameStates();
         this.addGameMusic();
@@ -41,16 +48,15 @@ class Boot extends Phaser.State {
 
     update(){
 
-        if (this.leftKey.isDown && this.addedStates)
-        {
+        if(this.addedStates && this.filesLoaded){
+            console.log('wtf')
             this.theGame.state.start("GameMenu");
-            
-        } 
+        }
 
     }
 
     addGameStates(){
-
+     
         this.theGame.state.add("GameMenu",GameMenu);
         this.theGame.state.add("Game",Game);
         this.theGame.state.add("GameOver",GameOver);
@@ -58,6 +64,7 @@ class Boot extends Phaser.State {
         this.theGame.state.add("Options",Options);
 
         this.addedStates = true
+
     }
     
     addGameMusic(){
@@ -81,9 +88,8 @@ class Boot extends Phaser.State {
     }
     
     loadComplete(){
-    
-        console.log('alldone')
-    
+        console.log('done loading files')
+        this.filesLoaded = true
     }
  
 }
