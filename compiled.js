@@ -68,6 +68,7 @@ var GameMenu = function (_Phaser$State) {
         key: "create",
         value: function create() {
 
+            this.theGame.add.sprite(0, 0, 'menu_bg');
             this.button = this.theGame.add.button(this.width / 2, this.height / 2, "menu_start_button", this.startGame, this, 1, 0, 2);
             this.button.x = this.width / 2 - this.button.texture.frame.width / 2;
             this.button.y = this.height / 2 - this.button.texture.frame.height / 2;
@@ -97,6 +98,78 @@ var Game = function (_Phaser$State) {
     }
 
     createClass(Game, [{
+        key: 'init',
+        value: function init() {
+            this.theGame = this.game.state.game;
+            this.w = this.theGame.width;
+            this.h = this.theGame.height;
+        }
+    }, {
+        key: 'preload',
+        value: function preload() {}
+    }, {
+        key: 'create',
+        value: function create() {
+
+            this.theTileMap = this.theGame.add.tilemap('testing');
+            this.theTileMap.addTilesetImage('tiles');
+            this.layer1 = this.theTileMap.createLayer('Tile Layer 1');
+            this.layer1.resizeWorld();
+            var mapW = this.theTileMap.widthInPixels;
+            var mapH = this.theTileMap.heightInPixels;
+
+            this.layer1.fixedToCamera = true;
+            this.layer1.cameraOffset = { x: this.w / 2 - mapW / 2, y: this.h / 2 - mapH / 2 };
+            this.layer1.anchor.setTo(0, 0);
+
+            console.log(this.theGame.camera);
+        }
+    }, {
+        key: 'update',
+        value: function update() {}
+    }, {
+        key: 'render',
+        value: function render() {}
+    }]);
+    return Game;
+}(Phaser.State);
+
+var GameOver = function (_Phaser$State) {
+    inherits(GameOver, _Phaser$State);
+
+    function GameOver() {
+        classCallCheck(this, GameOver);
+        return possibleConstructorReturn(this, (GameOver.__proto__ || Object.getPrototypeOf(GameOver)).apply(this, arguments));
+    }
+
+    createClass(GameOver, [{
+        key: "init",
+        value: function init() {}
+    }, {
+        key: "preload",
+        value: function preload() {}
+    }, {
+        key: "create",
+        value: function create() {}
+    }, {
+        key: "update",
+        value: function update() {}
+    }, {
+        key: "render",
+        value: function render() {}
+    }]);
+    return GameOver;
+}(Phaser.State);
+
+var Credits = function (_Phaser$State) {
+    inherits(Credits, _Phaser$State);
+
+    function Credits() {
+        classCallCheck(this, Credits);
+        return possibleConstructorReturn(this, (Credits.__proto__ || Object.getPrototypeOf(Credits)).apply(this, arguments));
+    }
+
+    createClass(Credits, [{
         key: 'init',
         value: function init() {
             this.theGame = this.game.state.game;
@@ -320,60 +393,6 @@ var Game = function (_Phaser$State) {
             this.scoreText.text = 'score: ' + this.score;
         }
     }]);
-    return Game;
-}(Phaser.State);
-
-var GameOver = function (_Phaser$State) {
-    inherits(GameOver, _Phaser$State);
-
-    function GameOver() {
-        classCallCheck(this, GameOver);
-        return possibleConstructorReturn(this, (GameOver.__proto__ || Object.getPrototypeOf(GameOver)).apply(this, arguments));
-    }
-
-    createClass(GameOver, [{
-        key: "init",
-        value: function init() {}
-    }, {
-        key: "preload",
-        value: function preload() {}
-    }, {
-        key: "create",
-        value: function create() {}
-    }, {
-        key: "update",
-        value: function update() {}
-    }, {
-        key: "render",
-        value: function render() {}
-    }]);
-    return GameOver;
-}(Phaser.State);
-
-var Credits = function (_Phaser$State) {
-    inherits(Credits, _Phaser$State);
-
-    function Credits() {
-        classCallCheck(this, Credits);
-        return possibleConstructorReturn(this, (Credits.__proto__ || Object.getPrototypeOf(Credits)).apply(this, arguments));
-    }
-
-    createClass(Credits, [{
-        key: "init",
-        value: function init() {}
-    }, {
-        key: "preload",
-        value: function preload() {}
-    }, {
-        key: "create",
-        value: function create() {}
-    }, {
-        key: "update",
-        value: function update() {}
-    }, {
-        key: "render",
-        value: function render() {}
-    }]);
     return Credits;
 }(Phaser.State);
 
@@ -424,6 +443,8 @@ var Boot = function (_Phaser$State) {
     }, {
         key: "preload",
         value: function preload() {
+            this.theGame.load.tilemap('testing', 'assets/images/fuck.json', null, Phaser.Tilemap.TILED_JSON);
+            this.theGame.load.image('tiles', './assets/images/test_map.png');
             this.theGame.load.image('button_bg', './assets/images/button_background.png');
             this.theGame.load.image('sky', './assets/images/sky.png');
             this.theGame.load.image('ground', './assets/images/platform.png');
@@ -435,6 +456,7 @@ var Boot = function (_Phaser$State) {
             this.theGame.load.bitmapFont('carrier_command', 'assets/fonts/carrier_command.png', 'assets/fonts/carrier_command.xml');
             this.theGame.load.bitmapFont('gem', 'assets/fonts/gem.png', 'assets/fonts/gem.xml');
             this.theGame.load.spritesheet('menu_start_button', './assets/main_menu/play_button.png', 128, 32);
+            this.theGame.load.image('menu_bg', './assets/main_menu/menu_bg.png');
         }
     }, {
         key: "create",
@@ -463,7 +485,8 @@ var Boot = function (_Phaser$State) {
         value: function update() {
 
             if (this.addedStates && this.filesLoaded) {
-                this.theGame.state.start("GameMenu");
+                //this.theGame.state.start("GameMenu");
+                this.theGame.state.start("Game");
             }
         }
     }, {

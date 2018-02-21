@@ -16,6 +16,8 @@ class Boot extends Phaser.State {
     }
 
     preload() {
+        this.theGame.load.tilemap('testing', 'assets/images/fuck.json', null, Phaser.Tilemap.TILED_JSON);
+        this.theGame.load.image('tiles', './assets/images/test_map.png');
         this.theGame.load.image('button_bg', './assets/images/button_background.png');
         this.theGame.load.image('sky', './assets/images/sky.png');
         this.theGame.load.image('ground', './assets/images/platform.png');
@@ -27,6 +29,7 @@ class Boot extends Phaser.State {
         this.theGame.load.bitmapFont('carrier_command', 'assets/fonts/carrier_command.png', 'assets/fonts/carrier_command.xml');
         this.theGame.load.bitmapFont('gem', 'assets/fonts/gem.png', 'assets/fonts/gem.xml');
         this.theGame.load.spritesheet('menu_start_button', './assets/main_menu/play_button.png', 128, 32)
+        this.theGame.load.image('menu_bg', './assets/main_menu/menu_bg.png')
     }
 
     create() {
@@ -53,7 +56,8 @@ class Boot extends Phaser.State {
     update(){
 
         if(this.addedStates && this.filesLoaded){
-            this.theGame.state.start("GameMenu");
+            //this.theGame.state.start("GameMenu");
+            this.theGame.state.start("Game");
         }
 
     }
