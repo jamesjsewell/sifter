@@ -1,9 +1,14 @@
+
+
+
 class Game extends Phaser.State {
 
     init() {
         this.theGame = this.game.state.game
         this.w = this.theGame.width
         this.h = this.theGame.height
+        this.selectedTilesArray = []
+        this.selected = false
     
     }
 
@@ -37,22 +42,60 @@ class Game extends Phaser.State {
        
     }
 
-    swap(){
-        //this.theTileMap.swap(5, 2);
-    }
-
     getTileProperties() {
 
         var x = this.layer1.getTileX(this.theGame.input.activePointer.worldX);
-        console.log(x)
         var y = this.layer1.getTileY(this.theGame.input.activePointer.worldY);
         var tile = this.theTileMap.getTile(x, y, this.layer1);
-        console.log(tile)
-        // Note: JSON.stringify will convert the object tile properties to a string
-        //currentDataString = JSON.stringify( tile.properties );
-        //tile.properties.wibble = true;
-        console.log(x, y)
+
+        if(!this.selectedTilesArray.length && tile){
+            
+            this.selectedTilesArray[0] = tile
+            this.selected = true
+            return
+        }
+
+        if(this.selected === true){
+            if(!tile){
+                console.log('drop selection')
+            }
+
+            if(tile){
+                this.selectedTilesArray[1] = tile
+                
+                this.swap()
+            }
+        }
+        
     
+    }
+
+    swap(){
+        var tile1 = this.selectedTilesArray[0]
+        var tile1Copy = new Phaser.Tile
+        
+        var tile2 = this.selectedTilesArray[1] 
+        var tile2Copy = new Phaser.Tile
+
+        for (var prop in tile2) {
+            if (tile2.hasOwnProperty(prop)) {
+                tile2Copy[prop] = tile2[prop];
+            }
+        }
+
+        for (var prop in tile1) {
+            if (tile1.hasOwnProperty(prop)) {
+                tile1Copy[prop] = tile1[prop];
+            }
+        }
+       
+        this.theTileMap.putTile(tile1, tile2Copy.x, tile2Copy.y)
+        this.theTileMap.putTile(tile2Copy, tile1Copy.x, tile1Copy.y)
+        this.selectedTilesArray = []
+        this.selected = false
+        
+        
+       
     }
 
     
