@@ -13,11 +13,15 @@ class Boot extends Phaser.State {
         this.theGame.load.onFileComplete.add(this.fileComplete, this);
         this.theGame.load.onLoadComplete.add(this.loadComplete, this);
         
+        this.theGame.scale.aspectRatio = 1
+        console.log(this.theGame.scale.aspectRatio)
+        console.log(this.theGame)
+        
     }
 
     preload() {
-        this.theGame.load.tilemap('testing', 'assets/images/fuck.json', null, Phaser.Tilemap.TILED_JSON);
-        this.theGame.load.image('tiles', './assets/images/test_map.png');
+        this.theGame.load.tilemap('testing', 'assets/images/testing2.json', null, Phaser.Tilemap.TILED_JSON);
+        this.theGame.load.image('tiles', './assets/images/test_map2.png');
         this.theGame.load.image('button_bg', './assets/images/button_background.png');
         this.theGame.load.image('sky', './assets/images/sky.png');
         this.theGame.load.image('ground', './assets/images/platform.png');
@@ -51,6 +55,8 @@ class Boot extends Phaser.State {
 
         //  Stop the following keys from propagating up to the browser
         this.theGame.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.SPACEBAR ]);
+
+        
     }
 
     update(){
@@ -95,7 +101,6 @@ class Boot extends Phaser.State {
     }
     
     loadComplete(){
-        console.log('done loading files')
         this.filesLoaded = true
     }
  

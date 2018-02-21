@@ -113,16 +113,14 @@ var Game = function (_Phaser$State) {
 
             this.theTileMap = this.theGame.add.tilemap('testing');
             this.theTileMap.addTilesetImage('tiles');
-            this.layer1 = this.theTileMap.createLayer('Tile Layer 1');
-            this.layer1.resizeWorld();
+            this.layer1 = this.theTileMap.createLayer('base_layer');
+            //this.layer1.resizeWorld()
             var mapW = this.theTileMap.widthInPixels;
             var mapH = this.theTileMap.heightInPixels;
 
-            this.layer1.fixedToCamera = true;
-            this.layer1.cameraOffset = { x: this.w / 2 - mapW / 2, y: this.h / 2 - mapH / 2 };
-            this.layer1.anchor.setTo(0, 0);
+            this.theGame.input.onDown.add(this.getTileProperties, this);
 
-            console.log(this.theGame.camera);
+            console.log(this.theTileMap);
         }
     }, {
         key: 'update',
@@ -130,6 +128,25 @@ var Game = function (_Phaser$State) {
     }, {
         key: 'render',
         value: function render() {}
+    }, {
+        key: 'swap',
+        value: function swap() {
+            //this.theTileMap.swap(5, 2);
+        }
+    }, {
+        key: 'getTileProperties',
+        value: function getTileProperties() {
+
+            var x = this.layer1.getTileX(this.theGame.input.activePointer.worldX);
+            console.log(x);
+            var y = this.layer1.getTileY(this.theGame.input.activePointer.worldY);
+            var tile = this.theTileMap.getTile(x, y, this.layer1);
+            console.log(tile);
+            // Note: JSON.stringify will convert the object tile properties to a string
+            //currentDataString = JSON.stringify( tile.properties );
+            //tile.properties.wibble = true;
+            console.log(x, y);
+        }
     }]);
     return Game;
 }(Phaser.State);
@@ -439,12 +456,16 @@ var Boot = function (_Phaser$State) {
             this.theGame.load.onLoadStart.add(this.loadStart, this);
             this.theGame.load.onFileComplete.add(this.fileComplete, this);
             this.theGame.load.onLoadComplete.add(this.loadComplete, this);
+
+            this.theGame.scale.aspectRatio = 1;
+            console.log(this.theGame.scale.aspectRatio);
+            console.log(this.theGame);
         }
     }, {
         key: "preload",
         value: function preload() {
-            this.theGame.load.tilemap('testing', 'assets/images/fuck.json', null, Phaser.Tilemap.TILED_JSON);
-            this.theGame.load.image('tiles', './assets/images/test_map.png');
+            this.theGame.load.tilemap('testing', 'assets/images/testing2.json', null, Phaser.Tilemap.TILED_JSON);
+            this.theGame.load.image('tiles', './assets/images/test_map2.png');
             this.theGame.load.image('button_bg', './assets/images/button_background.png');
             this.theGame.load.image('sky', './assets/images/sky.png');
             this.theGame.load.image('ground', './assets/images/platform.png');
@@ -524,7 +545,6 @@ var Boot = function (_Phaser$State) {
     }, {
         key: "loadComplete",
         value: function loadComplete() {
-            console.log('done loading files');
             this.filesLoaded = true;
         }
     }]);
@@ -540,6 +560,9 @@ var Game$2 = function (_Phaser$Game) {
         classCallCheck(this, Game);
 
         var _this = possibleConstructorReturn(this, (Game.__proto__ || Object.getPrototypeOf(Game)).call(this, { renderer: Phaser.AUTO,
+            width: 512,
+            height: 512,
+            aspectRatio: 1,
             crisp: true,
             roundPixels: true,
             alignH: true,

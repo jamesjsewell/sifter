@@ -16,17 +16,15 @@ class Game extends Phaser.State {
 
         this.theTileMap = this.theGame.add.tilemap('testing')
         this.theTileMap.addTilesetImage('tiles');
-        this.layer1 = this.theTileMap.createLayer('Tile Layer 1')
-        this.layer1.resizeWorld()
+        this.layer1 = this.theTileMap.createLayer('base_layer')
+        //this.layer1.resizeWorld()
         var mapW = this.theTileMap.widthInPixels
         var mapH = this.theTileMap.heightInPixels
         
-        this.layer1.fixedToCamera = true
-        this.layer1.cameraOffset = {x: this.w/2 - (mapW/2), y: this.h/2 - (mapH/2)}
-        this.layer1.anchor.setTo(0,0)
-    
-        console.log(this.theGame.camera)
+        this.theGame.input.onDown.add(this.getTileProperties, this);
 
+        console.log(this.theTileMap)
+    
 
     }
 
@@ -38,6 +36,27 @@ class Game extends Phaser.State {
     render(){
        
     }
+
+    swap(){
+        //this.theTileMap.swap(5, 2);
+    }
+
+    getTileProperties() {
+
+        var x = this.layer1.getTileX(this.theGame.input.activePointer.worldX);
+        console.log(x)
+        var y = this.layer1.getTileY(this.theGame.input.activePointer.worldY);
+        var tile = this.theTileMap.getTile(x, y, this.layer1);
+        console.log(tile)
+        // Note: JSON.stringify will convert the object tile properties to a string
+        //currentDataString = JSON.stringify( tile.properties );
+        //tile.properties.wibble = true;
+        console.log(x, y)
+    
+    }
+
+    
+
  
 }
 

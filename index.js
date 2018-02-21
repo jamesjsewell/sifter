@@ -10,6 +10,9 @@ class Game extends Phaser.Game {
     constructor() {
  
         super({renderer: Phaser.AUTO,
+            width: 512,
+            height: 512,
+            aspectRatio: 1,
             crisp: true,
             roundPixels: true,
             alignH: true,
