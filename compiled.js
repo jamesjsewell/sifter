@@ -58,6 +58,45 @@ var GameMenu = function (_Phaser$State) {
     }
 
     createClass(GameMenu, [{
+        key: "init",
+        value: function init() {
+            this.theGame = this.game.state.game;
+            this.width = this.theGame._width;
+            this.height = this.theGame._height;
+        }
+    }, {
+        key: "create",
+        value: function create() {
+
+            this.button = this.theGame.add.button(this.width / 2, this.height / 2, "menu_start_button", this.startGame, this, 1, 0, 2);
+            this.button.x = this.width / 2 - this.button.texture.frame.width / 2;
+            this.button.y = this.height / 2 - this.button.texture.frame.height / 2;
+        }
+    }, {
+        key: "update",
+        value: function update() {}
+    }, {
+        key: "render",
+        value: function render() {}
+    }, {
+        key: "startGame",
+        value: function startGame() {
+
+            this.theGame.state.start("Game");
+        }
+    }]);
+    return GameMenu;
+}(Phaser.State);
+
+var Game = function (_Phaser$State) {
+    inherits(Game, _Phaser$State);
+
+    function Game() {
+        classCallCheck(this, Game);
+        return possibleConstructorReturn(this, (Game.__proto__ || Object.getPrototypeOf(Game)).apply(this, arguments));
+    }
+
+    createClass(Game, [{
         key: 'init',
         value: function init() {
             this.theGame = this.game.state.game;
@@ -281,33 +320,6 @@ var GameMenu = function (_Phaser$State) {
             this.scoreText.text = 'score: ' + this.score;
         }
     }]);
-    return GameMenu;
-}(Phaser.State);
-
-var Game = function (_Phaser$State) {
-    inherits(Game, _Phaser$State);
-
-    function Game() {
-        classCallCheck(this, Game);
-        return possibleConstructorReturn(this, (Game.__proto__ || Object.getPrototypeOf(Game)).apply(this, arguments));
-    }
-
-    createClass(Game, [{
-        key: "init",
-        value: function init() {}
-    }, {
-        key: "preload",
-        value: function preload() {}
-    }, {
-        key: "create",
-        value: function create() {}
-    }, {
-        key: "update",
-        value: function update() {}
-    }, {
-        key: "render",
-        value: function render() {}
-    }]);
     return Game;
 }(Phaser.State);
 
@@ -412,6 +424,7 @@ var Boot = function (_Phaser$State) {
     }, {
         key: "preload",
         value: function preload() {
+            this.theGame.load.image('button_bg', './assets/images/button_background.png');
             this.theGame.load.image('sky', './assets/images/sky.png');
             this.theGame.load.image('ground', './assets/images/platform.png');
             this.theGame.load.image('star', './assets/images/star.png');
@@ -421,6 +434,7 @@ var Boot = function (_Phaser$State) {
             this.theGame.load.image('menu', './assets/images/number-buttons-90x90.png', 270, 180);
             this.theGame.load.bitmapFont('carrier_command', 'assets/fonts/carrier_command.png', 'assets/fonts/carrier_command.xml');
             this.theGame.load.bitmapFont('gem', 'assets/fonts/gem.png', 'assets/fonts/gem.xml');
+            this.theGame.load.spritesheet('menu_start_button', './assets/main_menu/play_button.png', 128, 32);
         }
     }, {
         key: "create",
@@ -434,6 +448,8 @@ var Boot = function (_Phaser$State) {
 
             this.addGameStates();
             this.addGameMusic();
+
+            //just leaving this here for later, will come in handy maybe
             //  Register the keys.
             this.leftKey = this.theGame.input.keyboard.addKey(Phaser.Keyboard.LEFT);
             this.rightKey = this.theGame.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
@@ -447,7 +463,6 @@ var Boot = function (_Phaser$State) {
         value: function update() {
 
             if (this.addedStates && this.filesLoaded) {
-                console.log('wtf');
                 this.theGame.state.start("GameMenu");
             }
         }

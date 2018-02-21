@@ -16,6 +16,7 @@ class Boot extends Phaser.State {
     }
 
     preload() {
+        this.theGame.load.image('button_bg', './assets/images/button_background.png');
         this.theGame.load.image('sky', './assets/images/sky.png');
         this.theGame.load.image('ground', './assets/images/platform.png');
         this.theGame.load.image('star', './assets/images/star.png');
@@ -25,6 +26,7 @@ class Boot extends Phaser.State {
         this.theGame.load.image('menu', './assets/images/number-buttons-90x90.png', 270, 180);
         this.theGame.load.bitmapFont('carrier_command', 'assets/fonts/carrier_command.png', 'assets/fonts/carrier_command.xml');
         this.theGame.load.bitmapFont('gem', 'assets/fonts/gem.png', 'assets/fonts/gem.xml');
+        this.theGame.load.spritesheet('menu_start_button', './assets/main_menu/play_button.png', 128, 32)
     }
 
     create() {
@@ -37,6 +39,8 @@ class Boot extends Phaser.State {
 
         this.addGameStates();
         this.addGameMusic();
+
+        //just leaving this here for later, will come in handy maybe
         //  Register the keys.
 	    this.leftKey = this.theGame.input.keyboard.addKey(Phaser.Keyboard.LEFT);
 	    this.rightKey = this.theGame.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
@@ -49,7 +53,6 @@ class Boot extends Phaser.State {
     update(){
 
         if(this.addedStates && this.filesLoaded){
-            console.log('wtf')
             this.theGame.state.start("GameMenu");
         }
 
