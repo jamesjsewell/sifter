@@ -116,11 +116,18 @@ var Game = function (_Phaser$State) {
             this.theTileMap = this.theGame.add.tilemap('testing');
             this.theTileMap.addTilesetImage('tiles');
             this.layer1 = this.theTileMap.createLayer('base_layer');
-            //this.layer1.resizeWorld()
-            var mapW = this.theTileMap.widthInPixels;
-            var mapH = this.theTileMap.heightInPixels;
 
             this.theGame.input.onDown.add(this.getTileProperties, this);
+
+            this.theTileMap.forEach(function (tile) {
+
+                if (tile.x === 0 || tile.x === 7 || tile.y === 0 || tile.y === 7) {
+                    if (tile.properties) {
+                        tile.properties['isBorder'] = true;
+                        console.log(tile);
+                    }
+                }
+            }, this, 0, 0, 8, 8, 0);
 
             console.log(this.theTileMap);
         }
@@ -138,14 +145,14 @@ var Game = function (_Phaser$State) {
             var y = this.layer1.getTileY(this.theGame.input.activePointer.worldY);
             var tile = this.theTileMap.getTile(x, y, this.layer1);
 
-            if (!this.selectedTilesArray.length && tile) {
+            if (!this.selectedTilesArray.length && tile && !tile.properties.isBorder) {
 
                 this.selectedTilesArray[0] = tile;
                 this.selected = true;
                 return;
             }
 
-            if (this.selected === true) {
+            if (this.selected === true && !tile.properties.isBorder) {
                 if (!tile) {
                     console.log('drop selection');
                 }
@@ -500,8 +507,9 @@ var Boot = function (_Phaser$State) {
     }, {
         key: "preload",
         value: function preload() {
-            this.theGame.load.tilemap('testing', 'assets/images/testing2.json', null, Phaser.Tilemap.TILED_JSON);
-            this.theGame.load.image('tiles', './assets/images/ground_atlas.png');
+            this.theGame.load.tilemap('testing', 'assets/images/tilemap.json', null, Phaser.Tilemap.TILED_JSON);
+            this.theGame.load.image('tiles', './assets/images/tilemap.png');
+            // this.theGame.load.atlas('atlas', './assets/images/atlas.png');
             this.theGame.load.image('button_bg', './assets/images/button_background.png');
             this.theGame.load.image('sky', './assets/images/sky.png');
             this.theGame.load.image('ground', './assets/images/platform.png');

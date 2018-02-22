@@ -22,11 +22,25 @@ class Game extends Phaser.State {
         this.theTileMap = this.theGame.add.tilemap('testing')
         this.theTileMap.addTilesetImage('tiles');
         this.layer1 = this.theTileMap.createLayer('base_layer')
-        //this.layer1.resizeWorld()
-        var mapW = this.theTileMap.widthInPixels
-        var mapH = this.theTileMap.heightInPixels
-        
+
         this.theGame.input.onDown.add(this.getTileProperties, this);
+
+        this.theTileMap.forEach((tile)=>{
+            
+            
+            if(tile.x === 0 || tile.x === 7 || tile.y === 0 || tile.y === 7){
+                if(tile.properties){
+                    tile.properties['isBorder'] = true
+                    console.log(tile)
+                }
+                
+            }
+            
+        
+        
+        
+        
+        }, this, 0, 0, 8, 8,0)
 
         console.log(this.theTileMap)
     
@@ -48,14 +62,14 @@ class Game extends Phaser.State {
         var y = this.layer1.getTileY(this.theGame.input.activePointer.worldY);
         var tile = this.theTileMap.getTile(x, y, this.layer1);
 
-        if(!this.selectedTilesArray.length && tile){
+        if(!this.selectedTilesArray.length && tile && !tile.properties.isBorder){
             
             this.selectedTilesArray[0] = tile
             this.selected = true
             return
         }
 
-        if(this.selected === true){
+        if(this.selected === true && !tile.properties.isBorder){
             if(!tile){
                 console.log('drop selection')
             }
