@@ -61,6 +61,8 @@ class Game extends Phaser.State {
         
         }
 
+        this.roadArray = []
+
     
     
 
@@ -105,7 +107,7 @@ class Game extends Phaser.State {
         //             if(aboveProps.bottom === true && startBlockProps.top === true){
                         
         //                 roadSections[1] = above
-        //                 connected = true
+        //                 
         //             }
         //             else{
                        
@@ -123,7 +125,7 @@ class Game extends Phaser.State {
         //             if(belowProps.top === true && startBlockProps.bottom === true){
                 
         //                 roadSections.push(below)
-        //                 connected = true
+        //                 
         //             }
         //             else{
                         
@@ -140,7 +142,7 @@ class Game extends Phaser.State {
         //         if(leftProps){
         //             if(leftProps.right === true && startBlockProps.left === true && connected === false){
         //                 roadSections.push(left)
-        //                 connected = true
+        //                 
         //             }
         //             else{
                         
@@ -158,7 +160,7 @@ class Game extends Phaser.State {
         //             if(rightProps.left === true && startBlockProps.right === true){
                         
         //                 roadSections.push(right)
-        //                 connected = true
+        //                 
                         
         //             }
         //             else{     
@@ -250,8 +252,11 @@ class Game extends Phaser.State {
         this.selectedTilesArray = []
         this.selected = false
 
+        this.roadArray = []
+        this.cycles = 0
         this.checkedSourceConnection = false
-        this.findConnections(this.firstInChain)
+        var firstBlock = this.theTileMap.getTileRight(0, this.sourceBlock.x, this.sourceBlock.y)
+        this.findConnections(firstBlock)
         
         
        
@@ -259,24 +264,12 @@ class Game extends Phaser.State {
 
     findConnections(startBlock){
         
-        var roadSections = []
-        var connected = false
+        
         var nextBlock = null
 
-
-        
         if(startBlock && this.cycles < 12){
 
             if(startBlock.properties){
-                
-                if(!this.checkedSourceConnection){
-                
-                    
-                
-                    if(!startBlock.properties.left){
-                        return
-                    }
-                }
                 
                 var above = this.theTileMap.getTileAbove(0, startBlock.x, startBlock.y)
                 var below = this.theTileMap.getTileBelow(0, startBlock.x, startBlock.y)
@@ -290,90 +283,45 @@ class Game extends Phaser.State {
                 var rightProps = right.properties
                 
                 if(aboveProps){
-                    if(aboveProps.bottom === true && startBlockProps.top === true && connected === false){
+                    if(aboveProps.bottom === true && startBlockProps.top === true){
                         
-                        // if(this.roadArray.includes(above) || roadSections.includes(above)){
-
-                        // }
-                        // else{
-
-                        //     roadSections.push(above)
-                        //     connected = true
-                        //     nextBlock = above
-
-                        // }
-                        
+                        console.log(this.roadArray)
                         if(!this.roadArray.includes(above)){
-                            console.log('ffwwwwff')
+                          
                             this.roadArray.push(above)
-                            connected = true
+                            
                             nextBlock = above
                         }
                         
                     }
-                    else{
-                       
-                        // var theIndex = roadSections.indexOf(above)
-
-                        // if(roadSections.length && theIndex > 0){
-                        //     roadSections.splice(theIndex, 1)
-                        // }  
-                        
-                           
-                    }
+            
                 }
 
                 if(belowProps){
 
                     if(belowProps.top === true && startBlockProps.bottom === true){
-                        
-                        // if(this.roadArray.includes(below) || roadSections.includes(below)){
-                            
-                        // }
-                        // else{
-                            
-                        //     roadSections.push(below)
-                        //     connected = true
-                        //     nextBlock = below
-
-                        // }
-                        
+                    
                         if(!this.roadArray.includes(below)){
-                            console.log(below, 'BELOOW')
                             
-                            connected = true
                             nextBlock = below
                         }
                         
                     }
-                    else{
-                        
-                        // var theIndex = roadSections.indexOf(above)
-
-                        // if(roadSections.length && theIndex > 0 && connected === false){
-                        //     roadSections.splice(theIndex, 1)
-                        // }    
-                            
-                    }
+            
                 }
 
+                if(leftProps){
 
-                // if(leftProps ){
-                //     if(leftProps.right === true && startBlockProps.left === true && connected === false){
-                //         roadSections.push(left)
-                //         connected = true
-                //         nextBlock = left
-                //     }
-                //     else{
+                    if(leftProps.right === true && startBlockProps.left === true){
                         
-                //         var theIndex = roadSections.indexOf(left)
+                        if(!this.roadArray.includes(left)){
+                            
+                            nextBlock = left
+                        }  
 
-                //         if(roadSections.length > 0 && theIndex > 0 && connected === false){
-                //             roadSections.splice(theIndex, 1)
-                //         }
-                          
-                //     }
-                // }
+                    }
+    
+                }
 
                 if(rightProps){
 
@@ -381,6 +329,9 @@ class Game extends Phaser.State {
                         if(right.properties.type === "destination"){
                             this.won = true
                             console.log('won')
+                            this.roadArray = []
+                            this.cycles = 0
+
                             return
                         }
                     }
@@ -388,47 +339,17 @@ class Game extends Phaser.State {
                 
                     if(rightProps.left === true && startBlockProps.right === true){
                         
-                        // if(this.roadArray.includes(right) || roadSections.includes(right)){
-                            
-                        // }
-                        // else{
-
-                        //     roadSections.push(right)
-                        //     connected = true
-                        //     nextBlock = right
-
-                        // }
-                        
                         if(!this.roadArray.includes(right)){
-                            roadSections.push(right)
-                            connected = true
+                            this.roadArray.push(right)
+                            
                             nextBlock = right
                         }
-                        
-                        
-                    }
-                    else{     
-
-                        // var theIndex = roadSections.indexOf(right)
-                        // if(roadSections.length > 0 && theIndex > 0 && connected === false){
-                        //     roadSections.splice(theIndex, 1) 
-                        // }
                              
                     }
-                }
-
-                
-            
+    
+                }  
             
             }
-            else{
-
-                // if(roadSections.length > 0){
-                //     roadSections.splice(roadSections.indexOf(startBlock), 1)
-                // }
-                
-            }
-
             
         } 
 
@@ -442,27 +363,14 @@ class Game extends Phaser.State {
             this.checkedSourceConnection = true
         }
 
-        
-    
         console.log('------------')
-        if(nextBlock){
-            //this.findConnections(nextBlock)
-        
 
-            if(nextBlock.type === "destination"){
-                
-                console.log('yessssss')
-            }
-            else{
-                this.findConnections(nextBlock)
-            }
-            
+        if(nextBlock){
         
-        }
-        else{
+            this.findConnections(nextBlock)
             
-            return roadSections
         }
+        
 
     }
 
@@ -484,9 +392,6 @@ class Game extends Phaser.State {
     remove_selector(){
         this.selector.visible = false
     }
-
-    
-
  
 }
 

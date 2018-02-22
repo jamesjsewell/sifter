@@ -153,6 +153,8 @@ var Game = function (_Phaser$State) {
 
                 console.log(this.roadArray);
             }
+
+            this.roadArray = [];
         }
     }, {
         key: 'update',
@@ -191,7 +193,7 @@ var Game = function (_Phaser$State) {
             //             if(aboveProps.bottom === true && startBlockProps.top === true){
 
             //                 roadSections[1] = above
-            //                 connected = true
+            //                 
             //             }
             //             else{
 
@@ -209,7 +211,7 @@ var Game = function (_Phaser$State) {
             //             if(belowProps.top === true && startBlockProps.bottom === true){
 
             //                 roadSections.push(below)
-            //                 connected = true
+            //                 
             //             }
             //             else{
 
@@ -226,7 +228,7 @@ var Game = function (_Phaser$State) {
             //         if(leftProps){
             //             if(leftProps.right === true && startBlockProps.left === true && connected === false){
             //                 roadSections.push(left)
-            //                 connected = true
+            //                 
             //             }
             //             else{
 
@@ -244,7 +246,7 @@ var Game = function (_Phaser$State) {
             //             if(rightProps.left === true && startBlockProps.right === true){
 
             //                 roadSections.push(right)
-            //                 connected = true
+            //                 
 
             //             }
             //             else{     
@@ -333,27 +335,21 @@ var Game = function (_Phaser$State) {
             this.selectedTilesArray = [];
             this.selected = false;
 
+            this.roadArray = [];
+            this.cycles = 0;
             this.checkedSourceConnection = false;
-            this.findConnections(this.firstInChain);
+            var firstBlock = this.theTileMap.getTileRight(0, this.sourceBlock.x, this.sourceBlock.y);
+            this.findConnections(firstBlock);
         }
     }, {
         key: 'findConnections',
         value: function findConnections(startBlock) {
 
-            var roadSections = [];
-            var connected = false;
             var nextBlock = null;
 
             if (startBlock && this.cycles < 12) {
 
                 if (startBlock.properties) {
-
-                    if (!this.checkedSourceConnection) {
-
-                        if (!startBlock.properties.left) {
-                            return;
-                        }
-                    }
 
                     var above = this.theTileMap.getTileAbove(0, startBlock.x, startBlock.y);
                     var below = this.theTileMap.getTileBelow(0, startBlock.x, startBlock.y);
@@ -367,34 +363,15 @@ var Game = function (_Phaser$State) {
                     var rightProps = right.properties;
 
                     if (aboveProps) {
-                        if (aboveProps.bottom === true && startBlockProps.top === true && connected === false) {
+                        if (aboveProps.bottom === true && startBlockProps.top === true) {
 
-                            // if(this.roadArray.includes(above) || roadSections.includes(above)){
-
-                            // }
-                            // else{
-
-                            //     roadSections.push(above)
-                            //     connected = true
-                            //     nextBlock = above
-
-                            // }
-
+                            console.log(this.roadArray);
                             if (!this.roadArray.includes(above)) {
-                                console.log('ffwwwwff');
+
                                 this.roadArray.push(above);
-                                connected = true;
+
                                 nextBlock = above;
                             }
-                        } else {
-
-                            // var theIndex = roadSections.indexOf(above)
-
-                            // if(roadSections.length && theIndex > 0){
-                            //     roadSections.splice(theIndex, 1)
-                            // }  
-
-
                         }
                     }
 
@@ -402,50 +379,23 @@ var Game = function (_Phaser$State) {
 
                         if (belowProps.top === true && startBlockProps.bottom === true) {
 
-                            // if(this.roadArray.includes(below) || roadSections.includes(below)){
-
-                            // }
-                            // else{
-
-                            //     roadSections.push(below)
-                            //     connected = true
-                            //     nextBlock = below
-
-                            // }
-
                             if (!this.roadArray.includes(below)) {
-                                console.log(below, 'BELOOW');
 
-                                connected = true;
                                 nextBlock = below;
                             }
-                        } else {
-
-                            // var theIndex = roadSections.indexOf(above)
-
-                            // if(roadSections.length && theIndex > 0 && connected === false){
-                            //     roadSections.splice(theIndex, 1)
-                            // }    
-
                         }
                     }
 
-                    // if(leftProps ){
-                    //     if(leftProps.right === true && startBlockProps.left === true && connected === false){
-                    //         roadSections.push(left)
-                    //         connected = true
-                    //         nextBlock = left
-                    //     }
-                    //     else{
+                    if (leftProps) {
 
-                    //         var theIndex = roadSections.indexOf(left)
+                        if (leftProps.right === true && startBlockProps.left === true) {
 
-                    //         if(roadSections.length > 0 && theIndex > 0 && connected === false){
-                    //             roadSections.splice(theIndex, 1)
-                    //         }
+                            if (!this.roadArray.includes(left)) {
 
-                    //     }
-                    // }
+                                nextBlock = left;
+                            }
+                        }
+                    }
 
                     if (rightProps) {
 
@@ -453,44 +403,23 @@ var Game = function (_Phaser$State) {
                             if (right.properties.type === "destination") {
                                 this.won = true;
                                 console.log('won');
+                                this.roadArray = [];
+                                this.cycles = 0;
+
                                 return;
                             }
                         }
 
                         if (rightProps.left === true && startBlockProps.right === true) {
 
-                            // if(this.roadArray.includes(right) || roadSections.includes(right)){
-
-                            // }
-                            // else{
-
-                            //     roadSections.push(right)
-                            //     connected = true
-                            //     nextBlock = right
-
-                            // }
-
                             if (!this.roadArray.includes(right)) {
-                                roadSections.push(right);
-                                connected = true;
+                                this.roadArray.push(right);
+
                                 nextBlock = right;
                             }
-                        } else {
-
-                            // var theIndex = roadSections.indexOf(right)
-                            // if(roadSections.length > 0 && theIndex > 0 && connected === false){
-                            //     roadSections.splice(theIndex, 1) 
-                            // }
-
                         }
                     }
-                } else {
-
-                        // if(roadSections.length > 0){
-                        //     roadSections.splice(roadSections.indexOf(startBlock), 1)
-                        // }
-
-                    }
+                }
             }
 
             console.log('thisBlock: ', startBlock);
@@ -503,19 +432,10 @@ var Game = function (_Phaser$State) {
             }
 
             console.log('------------');
+
             if (nextBlock) {
-                //this.findConnections(nextBlock)
 
-
-                if (nextBlock.type === "destination") {
-
-                    console.log('yessssss');
-                } else {
-                    this.findConnections(nextBlock);
-                }
-            } else {
-
-                return roadSections;
+                this.findConnections(nextBlock);
             }
         }
     }, {
