@@ -106,9 +106,11 @@ var Game = function (_Phaser$State) {
             this.h = this.theGame.height;
             this.selectedTilesArray = [];
             this.selected = false;
-            this.connectors = [];
-            this.roadArray = [];
-            this.checkedSourceConnection = false;
+            this.connectedTiles = [];
+            this.possibleBranches = [];
+            this.deadEnds = [];
+            this.alreadyMatched = [];
+            this.currentCell = null;
             this.cycles = 0;
         }
     }, {
@@ -129,9 +131,9 @@ var Game = function (_Phaser$State) {
 
                 if (tile.properties) {
 
-                    if (tile.properties.type === "connector") {
-                        _this2.connectors.push(tile);
-                    }
+                    // if(tile.properties.type === "connector"){
+                    //     this.connectors.push(tile)
+                    // }
 
                     if (tile.properties.type === "source") {
                         _this2.sourceBlock = tile;
@@ -144,138 +146,167 @@ var Game = function (_Phaser$State) {
                 }
             }, this, 0, 0, 8, 8, 0);
 
-            if (this.sourceBlock && this.theTileMap && !this.checkedSourceConnection) {
-
-                var startBlock = this.theTileMap.getTileRight(0, this.sourceBlock.x, this.sourceBlock.y);
-                this.roadArray[0] = startBlock;
-                console.log(startBlock.properties, 'firstBlock');
-                var connections = this.findConnections(startBlock);
-
-                console.log(this.roadArray);
-            }
-
-            this.roadArray = [];
+            this.checkForRoadStart();
         }
     }, {
         key: 'update',
-        value: function update() {
-
-            // var startBlock = null
-            // var roadSections = []
-            // var connected = false
-
-            // if(this.sourceBlock && this.theTileMap){
-            //     //console.log(0, this.sourceBlock.x, this.sourceBlock.y)
-            //     startBlock = this.theTileMap.getTileRight( 0, this.sourceBlock.x, this.sourceBlock.y)
-            // }
-            // else{
-            //     startBlock = null
-            // }
-
-            // if(startBlock){
-
-            //     if(startBlock.properties.left === true){
-
-            //         roadSections[0] = startBlock
-
-            //         var above = this.theTileMap.getTileAbove(0, startBlock.x, startBlock.y)
-            //         var below = this.theTileMap.getTileBelow(0, startBlock.x, startBlock.y)
-            //         var left = this.theTileMap.getTileLeft(0, startBlock.x, startBlock.y)
-            //         var right = this.theTileMap.getTileRight(0, startBlock.x, startBlock.y)
-
-            //         var startBlockProps = startBlock.properties
-            //         var aboveProps = above.properties
-            //         var belowProps = below.properties
-            //         var leftProps = left.properties
-            //         var rightProps = right.properties
-
-            //         if(aboveProps){
-            //             if(aboveProps.bottom === true && startBlockProps.top === true){
-
-            //                 roadSections[1] = above
-            //                 
-            //             }
-            //             else{
-
-            //                 var theIndex = roadSections.indexOf(above)
-
-            //                 if(roadSections.length && theIndex > 0){
-            //                     roadSections.splice(theIndex, 1)
-            //                 }  
-
-
-            //             }
-            //         }
-
-            //         if(belowProps){
-            //             if(belowProps.top === true && startBlockProps.bottom === true){
-
-            //                 roadSections.push(below)
-            //                 
-            //             }
-            //             else{
-
-            //                 var theIndex = roadSections.indexOf(above)
-
-            //                 if(roadSections.length && theIndex > 0 && connected === false){
-            //                     roadSections.splice(theIndex, 1)
-            //                 }    
-
-            //             }
-            //         }
-
-
-            //         if(leftProps){
-            //             if(leftProps.right === true && startBlockProps.left === true && connected === false){
-            //                 roadSections.push(left)
-            //                 
-            //             }
-            //             else{
-
-            //                 var theIndex = roadSections.indexOf(left)
-
-            //                 if(roadSections.length > 0 && theIndex > 0 && connected === false){
-            //                     roadSections.splice(theIndex, 1)
-            //                 }
-
-            //             }
-            //         }
-
-            //         if(rightProps){
-
-            //             if(rightProps.left === true && startBlockProps.right === true){
-
-            //                 roadSections.push(right)
-            //                 
-
-            //             }
-            //             else{     
-
-            //                 var theIndex = roadSections.indexOf(right)
-            //                 if(roadSections.length > 0 && theIndex > 0 && connected === false){
-            //                     roadSections.splice(theIndex, 1) 
-            //                 }
-
-            //             }
-            //         }
-
-
-            //     }
-            //     else{
-
-            //         if(roadSections.length > 0){
-            //             roadSections.splice(roadSections.indexOf(startBlock), 1)
-            //         }
-
-            //     }
-
-            //     console.log(roadSections)
-            // } 
-
-        }
+        value: function update() {}
     }, {
         key: 'render',
         value: function render() {}
+    }, {
+        key: 'checkForRoadStart',
+        value: function checkForRoadStart() {
+            var startCell = this.theTileMap.getTileRight(0, this.sourceBlock.x, this.sourceBlock.y);
+            if (startCell) {
+                if (startCell.properties.left === true) {
+                    this.currentCell = null;
+                    this.alreadyMatched = [];
+                    this.deadEnds = [];
+                    this.alreadyMatched[0] = startCell;
+                    this.cycles = 0;
+                    this.traversePath(startCell);
+                }
+            }
+        }
+    }, {
+        key: 'traversePath',
+        value: function traversePath(currentCell) {
+
+            console.log(currentCell);
+
+            var foundMatches = this.testConnections(currentCell, this.alreadyMatched);
+
+            this.cycles = this.cycles + 1;
+
+            if (foundMatches && !foundMatches.length) {
+
+                this.deadEnds.push(currentCell);
+
+                if (this.alreadyMatched.length <= 1) {
+                    currentCell = this.alreadyMatched[0];
+                } else {
+                    currentCell = this.alreadyMatched[this.alreadyMatched.length];
+                }
+                console.log(currentCell);
+
+                if (this.cycles < 20) {
+                    this.traversePath(currentCell);
+                } else {
+                    console.log('cycle limit reached, dead end');
+                }
+            } else {
+
+                this.alreadyMatched.push(currentCell);
+                currentCell = null;
+
+                if (foundMatches && foundMatches.length) {
+
+                    for (var i = 0; i <= foundMatches.length; i++) {
+                        if (!this.deadEnds.includes(foundMatches[i])) {
+                            currentCell = foundMatches[i];
+
+                            break;
+                        }
+                    }
+                }
+
+                if (currentCell) {
+                    console.log(currentCell);
+                    if (this.cycles < 20) {
+                        this.traversePath(currentCell);
+                    } else {
+                        console.log('cycle limit reached');
+                    }
+                }
+            }
+        }
+    }, {
+        key: 'testConnections',
+        value: function testConnections(theTile, alreadyMatched) {
+
+            var matches = [];
+
+            if (theTile && theTile.properties) {
+
+                var above = this.theTileMap.getTileAbove(0, theTile.x, theTile.y);
+                var below = this.theTileMap.getTileBelow(0, theTile.x, theTile.y);
+                var left = this.theTileMap.getTileLeft(0, theTile.x, theTile.y);
+                var right = this.theTileMap.getTileRight(0, theTile.x, theTile.y);
+
+                var theTileProps = theTile.properties;
+
+                if (above) {
+                    var aboveProps = above.properties;
+                }
+
+                if (below) {
+                    var belowProps = below.properties;
+                }
+
+                if (left) {
+                    var leftProps = left.properties;
+                }
+
+                if (right) {
+                    var rightProps = right.properties;
+                }
+
+                if (aboveProps) {
+                    if (aboveProps.bottom === true && theTileProps.top === true) {
+
+                        if (!alreadyMatched.includes(above)) {
+                            matches.push(above);
+                        }
+                    }
+                }
+
+                if (belowProps) {
+
+                    if (belowProps.top === true && theTileProps.bottom === true) {
+
+                        if (!alreadyMatched.includes(below)) {
+                            matches.push(below);
+                        }
+                    }
+                }
+
+                if (leftProps) {
+
+                    if (leftProps.right === true && theTileProps.left === true) {
+
+                        if (!alreadyMatched.includes(left)) {
+                            matches.push(left);
+                        }
+                    }
+                }
+
+                if (rightProps) {
+                    if (right.properties.type === "destination") {
+                        console.log(right);
+                    }
+                    console.log(rightProps);
+                    if (rightProps.left === true && theTileProps.right === true || rightProps.type === "destination") {
+
+                        if (!alreadyMatched.includes(right)) {
+                            matches.push(right);
+
+                            if (rightProps.type === "destination") {
+                                console.log('donne');
+                                console.log(right);
+                                this.currentCell = null;
+                                this.alreadyMatched = [];
+                                this.deadEnds = [];
+                                this.cycles = 0;
+                                return;
+                            }
+                        }
+                    }
+                }
+
+                return matches;
+            }
+        }
     }, {
         key: 'getTileProperties',
         value: function getTileProperties() {
@@ -288,7 +319,7 @@ var Game = function (_Phaser$State) {
 
                 this.selectedTilesArray[0] = tile;
                 this.selected = true;
-                console.log(tile);
+
                 this.create_selector(tile.worldX, tile.worldY);
                 return;
             }
@@ -335,108 +366,7 @@ var Game = function (_Phaser$State) {
             this.selectedTilesArray = [];
             this.selected = false;
 
-            this.roadArray = [];
-            this.cycles = 0;
-            this.checkedSourceConnection = false;
-            var firstBlock = this.theTileMap.getTileRight(0, this.sourceBlock.x, this.sourceBlock.y);
-            this.findConnections(firstBlock);
-        }
-    }, {
-        key: 'findConnections',
-        value: function findConnections(startBlock) {
-
-            var nextBlock = null;
-
-            if (startBlock && this.cycles < 12) {
-
-                if (startBlock.properties) {
-
-                    var above = this.theTileMap.getTileAbove(0, startBlock.x, startBlock.y);
-                    var below = this.theTileMap.getTileBelow(0, startBlock.x, startBlock.y);
-                    var left = this.theTileMap.getTileLeft(0, startBlock.x, startBlock.y);
-                    var right = this.theTileMap.getTileRight(0, startBlock.x, startBlock.y);
-
-                    var startBlockProps = startBlock.properties;
-                    var aboveProps = above.properties;
-                    var belowProps = below.properties;
-                    var leftProps = left.properties;
-                    var rightProps = right.properties;
-
-                    if (aboveProps) {
-                        if (aboveProps.bottom === true && startBlockProps.top === true) {
-
-                            console.log(this.roadArray);
-                            if (!this.roadArray.includes(above)) {
-
-                                this.roadArray.push(above);
-
-                                nextBlock = above;
-                            }
-                        }
-                    }
-
-                    if (belowProps) {
-
-                        if (belowProps.top === true && startBlockProps.bottom === true) {
-
-                            if (!this.roadArray.includes(below)) {
-
-                                nextBlock = below;
-                            }
-                        }
-                    }
-
-                    if (leftProps) {
-
-                        if (leftProps.right === true && startBlockProps.left === true) {
-
-                            if (!this.roadArray.includes(left)) {
-
-                                nextBlock = left;
-                            }
-                        }
-                    }
-
-                    if (rightProps) {
-
-                        if (startBlock.properties.right === true) {
-                            if (right.properties.type === "destination") {
-                                this.won = true;
-                                console.log('won');
-                                this.roadArray = [];
-                                this.cycles = 0;
-
-                                return;
-                            }
-                        }
-
-                        if (rightProps.left === true && startBlockProps.right === true) {
-
-                            if (!this.roadArray.includes(right)) {
-                                this.roadArray.push(right);
-
-                                nextBlock = right;
-                            }
-                        }
-                    }
-                }
-            }
-
-            console.log('thisBlock: ', startBlock);
-            console.log('next startblock', nextBlock);
-            //console.log('nextBlock', nextBlock, nextBlock.index)
-            this.cycles = this.cycles + 1;
-
-            if (!this.checkedSourceConnection) {
-                this.checkedSourceConnection = true;
-            }
-
-            console.log('------------');
-
-            if (nextBlock) {
-
-                this.findConnections(nextBlock);
-            }
+            this.checkForRoadStart();
         }
     }, {
         key: 'create_selector',
