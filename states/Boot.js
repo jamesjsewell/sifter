@@ -20,9 +20,9 @@ class Boot extends Phaser.State {
     }
 
     preload() {
-        this.theGame.load.tilemap('testing', 'assets/images/tilemap.json', null, Phaser.Tilemap.TILED_JSON);
+        this.theGame.load.tilemap('testing', 'assets/images/tilemap_2.json', null, Phaser.Tilemap.TILED_JSON);
         this.theGame.load.image('tiles', './assets/images/tilemap.png');
-        // this.theGame.load.atlas('atlas', './assets/images/atlas.png');
+        this.theGame.load.atlas('atlas', 'assets/images/atlas_test.png', 'assets/images/atlas_test.json');
         this.theGame.load.image('button_bg', './assets/images/button_background.png');
         this.theGame.load.image('sky', './assets/images/sky.png');
         this.theGame.load.image('ground', './assets/images/platform.png');
@@ -63,8 +63,8 @@ class Boot extends Phaser.State {
     update(){
 
         if(this.addedStates && this.filesLoaded){
-            //this.theGame.state.start("GameMenu");
-            this.theGame.state.start("Game");
+            this.theGame.state.start("GameMenu");
+            //this.theGame.state.start("Game");
         }
 
     }

@@ -66,6 +66,8 @@ class Game extends Phaser.State {
             
             this.selectedTilesArray[0] = tile
             this.selected = true
+            console.log(tile)
+            this.create_selector(tile.worldX, tile.worldY)
             return
         }
 
@@ -78,6 +80,10 @@ class Game extends Phaser.State {
                 this.selectedTilesArray[1] = tile
                 
                 this.swap()
+
+                this.remove_selector()
+
+                return
             }
         }
         
@@ -110,6 +116,25 @@ class Game extends Phaser.State {
         
         
        
+    }
+
+    create_selector(x, y){
+        if(!this.selector){
+            this.selector = this.theGame.add.sprite(x, y, 'atlas');
+            this.selector.frameName = "selector.png"
+        }
+        else{
+            this.selector.x = x
+            this.selector.y = y
+            this.selector.visible = true
+        }
+           
+        
+        
+    }
+    
+    remove_selector(){
+        this.selector.visible = false
     }
 
     
