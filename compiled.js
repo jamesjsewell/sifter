@@ -69,7 +69,8 @@ var GameMenu = function (_Phaser$State) {
         value: function create() {
 
             this.theGame.add.sprite(0, 0, 'menu_bg');
-            this.button = this.theGame.add.button(this.width / 2, this.height / 2, "menu_start_button", this.startGame, this, 1, 0, 2);
+            this.button = this.theGame.add.button(this.width / 2, this.height / 2, "atlas", this.startGame, this, 1, 0, 2);
+            this.button.frameName = "play_button1.png";
             this.button.x = this.width / 2 - this.button.texture.frame.width / 2;
             this.button.y = this.height / 2 - this.button.texture.frame.height / 2;
         }
@@ -105,6 +106,7 @@ var Game = function (_Phaser$State) {
             this.h = this.theGame.height;
             this.selectedTilesArray = [];
             this.selected = false;
+            this.connectors = [];
         }
     }, {
         key: 'preload',
@@ -112,6 +114,7 @@ var Game = function (_Phaser$State) {
     }, {
         key: 'create',
         value: function create() {
+            var _this2 = this;
 
             this.theTileMap = this.theGame.add.tilemap('testing');
             this.theTileMap.addTilesetImage('tiles');
@@ -121,19 +124,125 @@ var Game = function (_Phaser$State) {
 
             this.theTileMap.forEach(function (tile) {
 
-                if (tile.x === 0 || tile.x === 7 || tile.y === 0 || tile.y === 7) {
-                    if (tile.properties) {
-                        tile.properties['isBorder'] = true;
-                        console.log(tile);
+                if (tile.properties) {
+
+                    if (tile.properties.type === "connector") {
+                        _this2.connectors.push(tile);
+                    }
+
+                    if (tile.properties.type === "source") {
+                        _this2.sourceBlock = tile;
+                    }
+
+                    if (tile.properties.type === "destination") {
+                        _this2.destinationBlock = tile;
                     }
                 }
             }, this, 0, 0, 8, 8, 0);
 
             console.log(this.theTileMap);
+            console.log(this.connectors, this.sourceBlock, this.destinationBlock);
         }
     }, {
         key: 'update',
-        value: function update() {}
+        value: function update() {
+
+            var startBlock = null;
+            var roadSections = [];
+            var connected = false;
+
+            if (this.sourceBlock && this.theTileMap) {
+                //console.log(0, this.sourceBlock.x, this.sourceBlock.y)
+                startBlock = this.theTileMap.getTileRight(0, this.sourceBlock.x, this.sourceBlock.y);
+            } else {
+                startBlock = null;
+            }
+
+            if (startBlock) {
+
+                if (startBlock.properties.left === true) {
+
+                    roadSections[0] = startBlock;
+
+                    var above = this.theTileMap.getTileAbove(0, startBlock.x, startBlock.y);
+                    var below = this.theTileMap.getTileBelow(0, startBlock.x, startBlock.y);
+                    var left = this.theTileMap.getTileLeft(0, startBlock.x, startBlock.y);
+                    var right = this.theTileMap.getTileRight(0, startBlock.x, startBlock.y);
+
+                    var startBlockProps = startBlock.properties;
+                    var aboveProps = above.properties;
+                    var belowProps = below.properties;
+                    var leftProps = left.properties;
+                    var rightProps = right.properties;
+
+                    if (aboveProps) {
+                        if (aboveProps.bottom === true && startBlockProps.top === true) {
+
+                            roadSections[1] = above;
+                            connected = true;
+                        } else {
+
+                            var theIndex = roadSections.indexOf(above);
+
+                            if (roadSections.length && theIndex > 0) {
+                                roadSections.splice(theIndex, 1);
+                            }
+                        }
+                    }
+
+                    if (belowProps) {
+                        if (belowProps.top === true && startBlockProps.bottom === true) {
+
+                            roadSections.push(below);
+                            connected = true;
+                        } else {
+
+                            var theIndex = roadSections.indexOf(above);
+
+                            if (roadSections.length && theIndex > 0 && connected === false) {
+                                roadSections.splice(theIndex, 1);
+                            }
+                        }
+                    }
+
+                    if (leftProps) {
+                        if (leftProps.right === true && startBlockProps.left === true && connected === false) {
+                            roadSections.push(left);
+                            connected = true;
+                        } else {
+
+                            var theIndex = roadSections.indexOf(left);
+
+                            if (roadSections.length > 0 && theIndex > 0 && connected === false) {
+                                roadSections.splice(theIndex, 1);
+                            }
+                        }
+                    }
+
+                    if (rightProps) {
+
+                        if (rightProps.left === true && startBlockProps.right === true) {
+
+                            roadSections.push(right);
+                            connected = true;
+                        } else {
+
+                            var theIndex = roadSections.indexOf(right);
+                            if (roadSections.length > 0 && theIndex > 0 && connected === false) {
+                                roadSections.splice(theIndex, 1);
+                            }
+                        }
+                    }
+                } else {
+
+                    if (roadSections.length > 0) {
+                        roadSections.splice(roadSections.indexOf(startBlock), 1);
+                    }
+                }
+
+                console.log(roadSections);
+            }
+        }
     }, {
         key: 'render',
         value: function render() {}
@@ -532,7 +641,7 @@ var Boot = function (_Phaser$State) {
         value: function preload() {
             this.theGame.load.tilemap('testing', 'assets/images/tilemap_2.json', null, Phaser.Tilemap.TILED_JSON);
             this.theGame.load.image('tiles', './assets/images/tilemap.png');
-            this.theGame.load.atlas('atlas', 'assets/images/atlas_test.png', 'assets/images/atlas_test.json');
+            this.theGame.load.atlas('atlas', 'assets/images/atlas.png', 'assets/images/atlas.json');
             this.theGame.load.image('button_bg', './assets/images/button_background.png');
             this.theGame.load.image('sky', './assets/images/sky.png');
             this.theGame.load.image('ground', './assets/images/platform.png');
@@ -573,8 +682,8 @@ var Boot = function (_Phaser$State) {
         value: function update() {
 
             if (this.addedStates && this.filesLoaded) {
-                this.theGame.state.start("GameMenu");
-                //this.theGame.state.start("Game");
+                //this.theGame.state.start("GameMenu");
+                this.theGame.state.start("Game");
             }
         }
     }, {

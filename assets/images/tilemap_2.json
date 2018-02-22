@@ -2,7 +2,7 @@
  "infinite":false,
  "layers":[
         {
-         "data":[0, 0, 0, 0, 0, 0, 0, 2, 2, 5, 2, 0, 0, 12, 7, 7, 13, 0, 3, 14, 2, 1, 15, 4, 0, 2, 10, 2, 2, 0, 0, 0, 0, 0, 0, 0],
+         "data":[16, 16, 16, 16, 16, 16, 16, 2, 2, 5, 2, 16, 16, 12, 7, 7, 13, 16, 3, 14, 2, 1, 15, 4, 16, 2, 10, 2, 2, 16, 16, 16, 16, 16, 16, 16],
          "height":6,
          "name":"base_layer",
          "opacity":1,
@@ -41,23 +41,43 @@
                 },
              "10":
                 {
-                 "type":"t_right"
+                 "bottom":true,
+                 "left":false,
+                 "right":true,
+                 "top":true,
+                 "type":"connector"
                 },
              "11":
                 {
-                 "type":"corner_top_left"
+                 "bottom":true,
+                 "left":false,
+                 "right":true,
+                 "top":false,
+                 "type":"connector"
                 },
              "12":
                 {
-                 "type":"corner_top_right"
+                 "bottom":true,
+                 "left":true,
+                 "right":false,
+                 "top":false,
+                 "type":"connector"
                 },
              "13":
                 {
-                 "type":"corner_bottom_right"
+                 "bottom":false,
+                 "left":true,
+                 "right":false,
+                 "top":true,
+                 "type":"connector"
                 },
              "14":
                 {
-                 "type":"corner_bottom_left"
+                 "bottom":false,
+                 "left":false,
+                 "right":true,
+                 "top":true,
+                 "type":"connector"
                 },
              "15":
                 {
@@ -73,27 +93,51 @@
                 },
              "4":
                 {
-                 "type":"all_way"
+                 "bottom":true,
+                 "left":true,
+                 "right":true,
+                 "top":true,
+                 "type":"connector"
                 },
              "5":
                 {
-                 "type":"vertical"
+                 "bottom":true,
+                 "left":false,
+                 "right":false,
+                 "top":true,
+                 "type":"connector"
                 },
              "6":
                 {
-                 "type":"horizontal"
+                 "bottom":false,
+                 "left":true,
+                 "right":true,
+                 "top":false,
+                 "type":"connector"
                 },
              "7":
                 {
-                 "type":"t_down"
+                 "bottom":true,
+                 "left":true,
+                 "right":true,
+                 "top":false,
+                 "type":"connector"
                 },
              "8":
                 {
-                 "type":"t_up"
+                 "bottom":false,
+                 "left":true,
+                 "right":true,
+                 "top":true,
+                 "type":"connector"
                 },
              "9":
                 {
-                 "type":"t_left"
+                 "bottom":true,
+                 "left":true,
+                 "right":false,
+                 "top":true,
+                 "type":"connector"
                 }
             },
          "tilepropertytypes":
@@ -108,22 +152,42 @@
                 },
              "10":
                 {
+                 "bottom":"bool",
+                 "left":"bool",
+                 "right":"bool",
+                 "top":"bool",
                  "type":"string"
                 },
              "11":
                 {
+                 "bottom":"bool",
+                 "left":"bool",
+                 "right":"bool",
+                 "top":"bool",
                  "type":"string"
                 },
              "12":
                 {
+                 "bottom":"bool",
+                 "left":"bool",
+                 "right":"bool",
+                 "top":"bool",
                  "type":"string"
                 },
              "13":
                 {
+                 "bottom":"bool",
+                 "left":"bool",
+                 "right":"bool",
+                 "top":"bool",
                  "type":"string"
                 },
              "14":
                 {
+                 "bottom":"bool",
+                 "left":"bool",
+                 "right":"bool",
+                 "top":"bool",
                  "type":"string"
                 },
              "15":
@@ -140,26 +204,50 @@
                 },
              "4":
                 {
+                 "bottom":"bool",
+                 "left":"bool",
+                 "right":"bool",
+                 "top":"bool",
                  "type":"string"
                 },
              "5":
                 {
+                 "bottom":"bool",
+                 "left":"bool",
+                 "right":"bool",
+                 "top":"bool",
                  "type":"string"
                 },
              "6":
                 {
+                 "bottom":"bool",
+                 "left":"bool",
+                 "right":"bool",
+                 "top":"bool",
                  "type":"string"
                 },
              "7":
                 {
+                 "bottom":"bool",
+                 "left":"bool",
+                 "right":"bool",
+                 "top":"bool",
                  "type":"string"
                 },
              "8":
                 {
+                 "bottom":"bool",
+                 "left":"bool",
+                 "right":"bool",
+                 "top":"bool",
                  "type":"string"
                 },
              "9":
                 {
+                 "bottom":"bool",
+                 "left":"bool",
+                 "right":"bool",
+                 "top":"bool",
                  "type":"string"
                 }
             },
