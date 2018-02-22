@@ -7,14 +7,7 @@ class Credits extends Phaser.State {
     }
 
     preload() {
-        this.theGame.load.image('sky', 'assets/sky.png');
-        this.theGame.load.image('ground', 'assets/platform.png');
-        this.theGame.load.image('star', 'assets/star.png');
-        this.theGame.load.spritesheet('dude', 'assets/dude.png', 32, 48);
-        this.theGame.load.spritesheet('resumeButton', 'assets/pause_menu/resume_button.png', 32, 32);
-        this.theGame.load.spritesheet('pauseButton', 'assets/pause_menu/pause_button.png', 32, 32);
-        this.theGame.load.image('menu', 'assets/number-buttons-90x90.png', 270, 180);
-        
+
     }
 
     create() {
@@ -76,7 +69,7 @@ class Credits extends Phaser.State {
         
 
         //move sprite to cursor
-        this.seeker = this.theGame.add.sprite(400, 300, '.assets/diamond.png');
+        this.seeker = this.theGame.add.sprite(400, 300, '../assets/images/diamond.png');
         this.seeker.anchor.setTo(0.5, 0.5);
 
         //  Enable Arcade Physics for the sprite
@@ -145,6 +138,8 @@ class Credits extends Phaser.State {
         var w = 800, h = 600;
         
         add_pause_button(this)
+
+        console.log(this.theGame)
 
         var self = this
 
