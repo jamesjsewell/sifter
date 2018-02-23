@@ -112,6 +112,7 @@ var Game = function (_Phaser$State) {
             this.alreadyMatched = [];
             this.currentCell = null;
             this.cycles = 0;
+            this.done = false;
         }
     }, {
         key: 'preload',
@@ -173,50 +174,85 @@ var Game = function (_Phaser$State) {
         key: 'traversePath',
         value: function traversePath(currentCell) {
 
-            console.log(currentCell);
-
-            var foundMatches = this.testConnections(currentCell, this.alreadyMatched);
-
-            this.cycles = this.cycles + 1;
-
-            if (foundMatches && !foundMatches.length) {
-
-                this.deadEnds.push(currentCell);
-
-                if (this.alreadyMatched.length <= 1) {
-                    currentCell = this.alreadyMatched[0];
-                } else {
-                    currentCell = this.alreadyMatched[this.alreadyMatched.length];
-                }
+            if (this.done === false) {
                 console.log(currentCell);
 
-                if (this.cycles < 20) {
-                    this.traversePath(currentCell);
-                } else {
-                    console.log('cycle limit reached, dead end');
+                var foundMatches = this.testConnections(currentCell, this.alreadyMatched);
+
+                if (this.done === true) {
+
+                    return;
                 }
-            } else {
 
-                this.alreadyMatched.push(currentCell);
-                currentCell = null;
+                this.cycles = this.cycles + 1;
 
-                if (foundMatches && foundMatches.length) {
+                if (this.deadEnds.includes(currentCell)) {
+                    console.log('in there');
+                }
+                console.log(this.deadEnds, currentCell);
 
-                    for (var i = 0; i <= foundMatches.length; i++) {
-                        if (!this.deadEnds.includes(foundMatches[i])) {
-                            currentCell = foundMatches[i];
+                var foundMatches = this.testConnections(currentCell, this.alreadyMatched);
 
-                            break;
+                console.log(this.deadEnds, currentCell);
+
+                if (!foundMatches) {
+
+                    if (!this.deadEnds.includes(currentCell)) {
+
+                        if (currentCell) {
+                            this.deadEnds.push(currentCell);
+                        }
+                        //
+                    } else {}
+
+                    // if(this.alreadyMatched.length <= 1){
+                    //     currentCell = this.alreadyMatched[0]
+                    // }
+                    // else{
+                    //     currentCell = this.alreadyMatched[this.alreadyMatched.length]
+                    // }
+                    // console.log(currentCell)
+
+                    if (this.cycles < 20) {
+
+                        console.log('well this is a dead end, now what?', currentCell);
+                        console.log(this.deadEnds);
+                        if (this.alreadyMatched.length) {
+                            currentCell = this.alreadyMatched[this.alreadyMatched.length];
+                            this.traversePath(currentCell);
+                        }
+                    } else {
+                        console.log('cycle limit reached, dead end');
+
+                        // if(this.alreadyMatched.length){
+                        //     currentCell = this.alreadyMatched.length
+                        //     this.traversePath(currentCell)
+                        // }
+                        // this.alreadyMatched = []
+
+                    }
+                } else {
+
+                    this.alreadyMatched.push(currentCell);
+                    currentCell = null;
+
+                    if (foundMatches && foundMatches.length) {
+
+                        for (var i = 0; i <= foundMatches.length; i++) {
+
+                            if (foundMatches[i]) {
+                                currentCell = foundMatches[i];
+                            }
                         }
                     }
-                }
 
-                if (currentCell) {
-                    console.log(currentCell);
-                    if (this.cycles < 20) {
-                        this.traversePath(currentCell);
-                    } else {
-                        console.log('cycle limit reached');
+                    if (currentCell) {
+                        console.log(currentCell);
+                        if (this.cycles < 20) {
+                            this.traversePath(currentCell);
+                        } else {
+                            console.log('cycle limit reached');
+                        }
                     }
                 }
             }
@@ -255,7 +291,7 @@ var Game = function (_Phaser$State) {
                 if (aboveProps) {
                     if (aboveProps.bottom === true && theTileProps.top === true) {
 
-                        if (!alreadyMatched.includes(above)) {
+                        if (!alreadyMatched.includes(above) && !this.deadEnds.includes(above)) {
                             matches.push(above);
                         }
                     }
@@ -265,7 +301,7 @@ var Game = function (_Phaser$State) {
 
                     if (belowProps.top === true && theTileProps.bottom === true) {
 
-                        if (!alreadyMatched.includes(below)) {
+                        if (!alreadyMatched.includes(below) && !this.deadEnds.includes(below)) {
                             matches.push(below);
                         }
                     }
@@ -275,36 +311,39 @@ var Game = function (_Phaser$State) {
 
                     if (leftProps.right === true && theTileProps.left === true) {
 
-                        if (!alreadyMatched.includes(left)) {
+                        if (!alreadyMatched.includes(left) && !this.deadEnds.includes(left)) {
                             matches.push(left);
                         }
                     }
                 }
 
                 if (rightProps) {
-                    if (right.properties.type === "destination") {
-                        console.log(right);
-                    }
-                    console.log(rightProps);
-                    if (rightProps.left === true && theTileProps.right === true || rightProps.type === "destination") {
 
-                        if (!alreadyMatched.includes(right)) {
+                    if (rightProps.left === true && theTileProps.right === true) {
+
+                        if (!alreadyMatched.includes(right) && !this.deadEnds.includes(right)) {
+
                             matches.push(right);
 
                             if (rightProps.type === "destination") {
                                 console.log('donne');
-                                console.log(right);
+
                                 this.currentCell = null;
                                 this.alreadyMatched = [];
-                                this.deadEnds = [];
+
                                 this.cycles = 0;
+                                this.done = true;
                                 return;
                             }
                         }
                     }
                 }
 
-                return matches;
+                if (matches.length) {
+                    return matches;
+                } else {
+                    return null;
+                }
             }
         }
     }, {
@@ -366,6 +405,7 @@ var Game = function (_Phaser$State) {
             this.selectedTilesArray = [];
             this.selected = false;
 
+            this.done = false;
             this.checkForRoadStart();
         }
     }, {

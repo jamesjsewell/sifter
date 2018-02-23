@@ -81,7 +81,6 @@
                 },
              "15":
                 {
-                 "left":true,
                  "type":"border"
                 },
              "2":
@@ -90,6 +89,7 @@
                 },
              "3":
                 {
+                 "left":true,
                  "type":"destination"
                 },
              "4":
@@ -193,7 +193,6 @@
                 },
              "15":
                 {
-                 "left":"bool",
                  "type":"string"
                 },
              "2":
@@ -202,6 +201,7 @@
                 },
              "3":
                 {
+                 "left":"bool",
                  "type":"string"
                 },
              "4":
