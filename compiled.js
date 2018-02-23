@@ -275,7 +275,9 @@ var Game = function (_Phaser$State) {
             this.backButton.anchor.setTo(0.5);
             this.backButton.alignIn(this.theGame.camera.view, Phaser.TOP_LEFT);
             this.backButton.bringToTop();
-            console.log(this.backButton);
+
+            this.truck = this.theGame.add.sprite(this.sourceBlock.worldX, this.sourceBlock.worldY, 'environment', this.currentLayerIndex);
+            this.truck.frameName = "truck1.png";
         }
     }, {
         key: 'update',
@@ -303,6 +305,16 @@ var Game = function (_Phaser$State) {
     }, {
         key: 'traversePath',
         value: function traversePath(currentCell) {
+
+            if (currentCell) {
+                if (currentCell.worldY && currentCell.worldX) {
+
+                    if (currentCell.properties && currentCell.properties.type === "connector") {
+                        this.truck.x = currentCell.worldX;
+                        this.truck.y = currentCell.worldY;
+                    }
+                }
+            }
 
             if (this.done === false) {
 
@@ -333,6 +345,7 @@ var Game = function (_Phaser$State) {
                             this.traversePath(currentCell);
                         }
                     } else {
+
                         console.log('cycle limit reached, dead end');
                     }
                 } else {
@@ -1041,6 +1054,7 @@ var Boot = function (_Phaser$State) {
             this.theGame.load.tilemap('map3', 'assets/images/tilemap_3.json', null, Phaser.Tilemap.TILED_JSON);
             this.theGame.load.image('tiles', './assets/images/tilemap.png');
             this.theGame.load.atlas('atlas', 'assets/images/atlas.png', 'assets/images/atlas.json');
+            this.theGame.load.atlas('environment', 'assets/images/environment.png', 'assets/images/environment.json');
             this.theGame.load.image('button_bg', './assets/images/button_background.png');
             this.theGame.load.image('sky', './assets/images/sky.png');
             this.theGame.load.image('ground', './assets/images/platform.png');

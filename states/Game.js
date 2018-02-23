@@ -83,8 +83,11 @@ class Game extends Phaser.State {
         this.backButton.anchor.setTo(0.5)
         this.backButton.alignIn(this.theGame.camera.view, Phaser.TOP_LEFT)
         this.backButton.bringToTop()
-        console.log(this.backButton)
-        
+
+        this.truck = this.theGame.add.sprite(this.sourceBlock.worldX, this.sourceBlock.worldY, 'environment', this.currentLayerIndex);
+        this.truck.frameName = "truck1.png"
+      
+    
 
 
     }
@@ -116,6 +119,18 @@ class Game extends Phaser.State {
     }
 
     traversePath(currentCell){
+
+        if(currentCell){
+            if(currentCell.worldY && currentCell.worldX){
+
+                if(currentCell.properties && currentCell.properties.type === "connector"){
+                    this.truck.x = currentCell.worldX
+                    this.truck.y = currentCell.worldY
+                }
+            }
+            
+        }
+        
 
         if(this.done === false){
                 
@@ -154,6 +169,7 @@ class Game extends Phaser.State {
                     
                 }
                 else{
+                    
                     console.log('cycle limit reached, dead end')              
                 
                 }
