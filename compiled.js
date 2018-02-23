@@ -49,6 +49,40 @@ var possibleConstructorReturn = function (self, call) {
   return call && (typeof call === "object" || typeof call === "function") ? call : self;
 };
 
+var MainMenu = function () {
+    function MainMenu(context) {
+        classCallCheck(this, MainMenu);
+
+        this.context = context;
+        this.theGame = this.context.theGame;
+        this.width = this.theGame._width;
+        this.height = this.theGame._height;
+        this.create_main_menu();
+    }
+
+    createClass(MainMenu, [{
+        key: 'create_main_menu',
+        value: function create_main_menu() {
+            console.log('the gamme', this.theGame);
+            console.log('creating main menu');
+            this.theGame.add.sprite(0, 0, 'menu_bg');
+            this.button = this.theGame.add.button(this.width / 2, this.height / 2, "atlas", this.startGame, this, 1, 0, 2);
+            this.button.frameName = "play_button1.png";
+            this.button.x = this.width / 2 - this.button.texture.frame.width / 2;
+            this.button.y = this.height / 2 - this.button.texture.frame.height / 2;
+
+            //this.menu_features = new MainMenu(this)
+        }
+    }, {
+        key: 'startGame',
+        value: function startGame() {
+            //console.log('starting game')
+            this.theGame.state.start("Game");
+        }
+    }]);
+    return MainMenu;
+}();
+
 var GameMenu = function (_Phaser$State) {
     inherits(GameMenu, _Phaser$State);
 
@@ -58,33 +92,36 @@ var GameMenu = function (_Phaser$State) {
     }
 
     createClass(GameMenu, [{
-        key: "init",
+        key: 'init',
         value: function init() {
             this.theGame = this.game.state.game;
             this.width = this.theGame._width;
             this.height = this.theGame._height;
         }
     }, {
-        key: "create",
+        key: 'create',
         value: function create() {
 
-            this.theGame.add.sprite(0, 0, 'menu_bg');
-            this.button = this.theGame.add.button(this.width / 2, this.height / 2, "atlas", this.startGame, this, 1, 0, 2);
-            this.button.frameName = "play_button1.png";
-            this.button.x = this.width / 2 - this.button.texture.frame.width / 2;
-            this.button.y = this.height / 2 - this.button.texture.frame.height / 2;
+            // this.theGame.add.sprite(0, 0, 'menu_bg')
+            // this.button = this.theGame.add.button(this.width/2, this.height/2, "atlas", this.startGame, this, 1, 0, 2);
+            // this.button.frameName = "play_button1.png"
+            // this.button.x = this.width/2 - (this.button.texture.frame.width/2) 
+            // this.button.y = this.height/2 - (this.button.texture.frame.height/2)
+
+            this.menu_features = new MainMenu(this);
         }
     }, {
-        key: "update",
+        key: 'update',
         value: function update() {}
     }, {
-        key: "render",
+        key: 'render',
         value: function render() {}
     }, {
-        key: "startGame",
+        key: 'startGame',
         value: function startGame() {
+            //console.log('starting game')
+            //this.theGame.state.start("Game");
 
-            this.theGame.state.start("Game");
         }
     }]);
     return GameMenu;
@@ -131,7 +168,7 @@ var Game = function (_Phaser$State) {
             console.log(this.currentLayerIndex);
 
             //this.layer1.resizeWorld();
-            //this.theTileMap.shuffle(1, 1, 4, 4, 0)
+            //this.theTileMap.shuffle(1, 1, 4, 4, this.currentLayerIndex)
 
             this.theGame.input.onDown.add(this.getTileProperties, this);
 
@@ -148,7 +185,7 @@ var Game = function (_Phaser$State) {
                         _this2.destinationBlock = tile;
                     }
                 }
-            }, this, 0, 0, 8, 8, 0);
+            }, this, 0, 0, 6, 6, this.currentLayerIndex);
         }
     }, {
         key: 'update',
@@ -159,7 +196,9 @@ var Game = function (_Phaser$State) {
     }, {
         key: 'checkForRoadStart',
         value: function checkForRoadStart() {
+
             var startCell = this.theTileMap.getTileRight(this.currentLayerIndex, this.sourceBlock.x, this.sourceBlock.y);
+
             if (startCell) {
                 if (startCell.properties.left === true) {
                     this.currentCell = null;
@@ -240,10 +279,10 @@ var Game = function (_Phaser$State) {
 
             if (theTile && theTile.properties) {
 
-                var above = this.theTileMap.getTileAbove(0, theTile.x, theTile.y);
-                var below = this.theTileMap.getTileBelow(0, theTile.x, theTile.y);
-                var left = this.theTileMap.getTileLeft(0, theTile.x, theTile.y);
-                var right = this.theTileMap.getTileRight(0, theTile.x, theTile.y);
+                var above = this.theTileMap.getTileAbove(this.currentLayerIndex, theTile.x, theTile.y);
+                var below = this.theTileMap.getTileBelow(this.currentLayerIndex, theTile.x, theTile.y);
+                var left = this.theTileMap.getTileLeft(this.currentLayerIndex, theTile.x, theTile.y);
+                var right = this.theTileMap.getTileRight(this.currentLayerIndex, theTile.x, theTile.y);
 
                 var theTileProps = theTile.properties;
 
@@ -293,7 +332,7 @@ var Game = function (_Phaser$State) {
                 }
 
                 if (rightProps) {
-
+                    console.log(rightProps);
                     if (rightProps.left === true && theTileProps.right === true) {
 
                         if (!alreadyMatched.includes(right) && !this.deadEnds.includes(right)) {
@@ -354,7 +393,7 @@ var Game = function (_Phaser$State) {
                 }
 
                 if (tile) {
-                    console.log(tile.properties);
+
                     if (tile.properties.type === "connector" || tile.properties.type === "blank") {
 
                         this.selectedTilesArray[1] = tile;
@@ -392,7 +431,7 @@ var Game = function (_Phaser$State) {
             }
 
             if (performSwap) {
-                console.log(tile2Copy.properties, tile1Copy.properties);
+
                 this.theTileMap.putTile(tile1, tile2Copy.x, tile2Copy.y, this.currentLayerIndex);
                 this.theTileMap.putTile(tile2Copy, tile1Copy.x, tile1Copy.y, this.currentLayerIndex);
                 this.selectedTilesArray = [];
@@ -422,20 +461,44 @@ var Game = function (_Phaser$State) {
     }, {
         key: 'change_level',
         value: function change_level() {
+            var _this3 = this;
 
             if (this.level === 1) {}
 
             if (this.level === 2) {
-                console.log('shit');
                 this.layer1.destroy();
-                //this.theTileMap.removeAllLayers()
-
                 this.layer1 = this.theTileMap.createLayer('level_2');
                 this.layer1.exists = true;
                 this.theTileMap.setLayer(this.layer1);
                 this.currentLayerIndex = this.theTileMap.getLayer(this.theTileMap.currentLayer);
+                console.log(this.currentLayerIndex);
                 this.selector.bringToTop();
             }
+
+            this.selectedTilesArray = [];
+            this.selected = false;
+            this.deadEnds = [];
+            this.alreadyMatched = [];
+            this.currentCell = null;
+            this.cycles = 0;
+            this.done = false;
+
+            this.theTileMap.forEach(function (tile) {
+
+                if (tile.properties) {
+
+                    if (tile.properties.type === "source") {
+                        _this3.sourceBlock = tile;
+                        _this3.firstInChain = _this3.theTileMap.getTileRight(_this3.currentLayerIndex, _this3.sourceBlock.x, _this3.sourceBlock.y);
+                    }
+
+                    if (tile.properties.type === "destination") {
+                        _this3.destinationBlock = tile;
+                    }
+                }
+            }, this, 0, 0, 6, 6, this.currentLayerIndex);
+
+            console.log(this.sourceBlock);
         }
     }]);
     return Game;
@@ -798,8 +861,8 @@ var Boot = function (_Phaser$State) {
         value: function update() {
 
             if (this.addedStates && this.filesLoaded) {
-                //this.theGame.state.start("GameMenu");
-                this.theGame.state.start("Game");
+                this.theGame.state.start("GameMenu");
+                //this.theGame.state.start("Game");
             }
         }
     }, {

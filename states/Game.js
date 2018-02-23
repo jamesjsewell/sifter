@@ -32,7 +32,7 @@ class Game extends Phaser.State {
         console.log(this.currentLayerIndex)
         
         //this.layer1.resizeWorld();
-        //this.theTileMap.shuffle(1, 1, 4, 4, 0)
+        //this.theTileMap.shuffle(1, 1, 4, 4, this.currentLayerIndex)
 
         this.theGame.input.onDown.add(this.getTileProperties, this);
 
@@ -52,7 +52,7 @@ class Game extends Phaser.State {
             }
         
         
-        }, this, 0, 0, 8, 8,0)
+        }, this, 0, 0, 6, 6,this.currentLayerIndex)
 
     
 
@@ -69,7 +69,9 @@ class Game extends Phaser.State {
     }
 
     checkForRoadStart(){
+    
         var startCell = this.theTileMap.getTileRight(this.currentLayerIndex, this.sourceBlock.x, this.sourceBlock.y)
+       
         if(startCell){
             if(startCell.properties.left === true){
                 this.currentCell = null
@@ -167,10 +169,10 @@ class Game extends Phaser.State {
 
 
                     
-            var above = this.theTileMap.getTileAbove(0, theTile.x, theTile.y)
-            var below = this.theTileMap.getTileBelow(0, theTile.x, theTile.y)
-            var left = this.theTileMap.getTileLeft(0, theTile.x, theTile.y)
-            var right = this.theTileMap.getTileRight(0, theTile.x, theTile.y)
+            var above = this.theTileMap.getTileAbove(this.currentLayerIndex, theTile.x, theTile.y)
+            var below = this.theTileMap.getTileBelow(this.currentLayerIndex, theTile.x, theTile.y)
+            var left = this.theTileMap.getTileLeft(this.currentLayerIndex, theTile.x, theTile.y)
+            var right = this.theTileMap.getTileRight(this.currentLayerIndex, theTile.x, theTile.y)
 
             var theTileProps = theTile.properties
 
@@ -229,7 +231,7 @@ class Game extends Phaser.State {
             }
 
             if(rightProps){
-                
+                console.log(rightProps)
                 if(rightProps.left === true && theTileProps.right === true){
 
                     if(!alreadyMatched.includes(right) && !this.deadEnds.includes(right)){
@@ -297,7 +299,7 @@ class Game extends Phaser.State {
             }
 
             if(tile){
-                console.log(tile.properties)
+             
                 if(tile.properties.type === "connector" || tile.properties.type === "blank"){
                 
                     this.selectedTilesArray[1] = tile
@@ -337,7 +339,7 @@ class Game extends Phaser.State {
 
     
         if(performSwap){
-            console.log(tile2Copy.properties, tile1Copy.properties)
+            
             this.theTileMap.putTile(tile1, tile2Copy.x, tile2Copy.y, this.currentLayerIndex)
             this.theTileMap.putTile(tile2Copy, tile1Copy.x, tile1Copy.y, this.currentLayerIndex)
             this.selectedTilesArray = []
@@ -376,16 +378,43 @@ class Game extends Phaser.State {
         }
 
         if(this.level === 2){
-            console.log('shit')
             this.layer1.destroy()
-            //this.theTileMap.removeAllLayers()
-
             this.layer1 = this.theTileMap.createLayer('level_2')
             this.layer1.exists = true
             this.theTileMap.setLayer(this.layer1)
             this.currentLayerIndex = this.theTileMap.getLayer(this.theTileMap.currentLayer)
+            console.log(this.currentLayerIndex)
             this.selector.bringToTop()
         }
+
+        this.selectedTilesArray = []
+        this.selected = false
+        this.deadEnds = []
+        this.alreadyMatched = []
+        this.currentCell = null
+        this.cycles = 0
+        this.done = false
+    
+
+        this.theTileMap.forEach((tile)=>{
+            
+            if(tile.properties){
+
+                if(tile.properties.type === "source"){
+                    this.sourceBlock = tile
+                    this.firstInChain = this.theTileMap.getTileRight(this.currentLayerIndex, this.sourceBlock.x, this.sourceBlock.y)
+                }
+
+                if(tile.properties.type === "destination"){
+                    this.destinationBlock = tile
+                }
+
+            }
+        
+        
+        }, this, 0, 0, 6, 6, this.currentLayerIndex)
+
+        console.log(this.sourceBlock)
     }
  
 }

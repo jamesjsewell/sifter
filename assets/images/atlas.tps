@@ -199,6 +199,26 @@
         </struct>
         <key>individualSpriteSettings</key>
         <map type="IndividualSpriteSettingsMap">
+            <key type="filename">gui/lvl1.png</key>
+            <key type="filename">gui/lvl2.png</key>
+            <key type="filename">gui/lvl3.png</key>
+            <key type="filename">gui/lvl4.png</key>
+            <key type="filename">gui/lvl5.png</key>
+            <key type="filename">gui/lvl6.png</key>
+            <key type="filename">gui/lvl7.png</key>
+            <key type="filename">gui/lvl8.png</key>
+            <struct type="IndividualSpriteSettings">
+                <key>pivotPoint</key>
+                <point_f>0.5,0.5</point_f>
+                <key>scale9Enabled</key>
+                <false/>
+                <key>scale9Borders</key>
+                <rect>32,32,64,64</rect>
+                <key>scale9Paddings</key>
+                <rect>32,32,64,64</rect>
+                <key>scale9FromFile</key>
+                <false/>
+            </struct>
             <key type="filename">gui/play_button1.png</key>
             <key type="filename">gui/play_button2.png</key>
             <struct type="IndividualSpriteSettings">

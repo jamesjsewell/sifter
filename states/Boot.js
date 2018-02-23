@@ -64,8 +64,8 @@ class Boot extends Phaser.State {
     update(){
 
         if(this.addedStates && this.filesLoaded){
-            //this.theGame.state.start("GameMenu");
-            this.theGame.state.start("Game");
+            this.theGame.state.start("GameMenu");
+            //this.theGame.state.start("Game");
         }
 
     }
