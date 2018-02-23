@@ -59,13 +59,15 @@ class Game extends Phaser.State {
         
         
         }, this, 0, 0, 6, 6,this.currentLayerIndex)
-
-        
         
         this.selector = this.theGame.add.sprite(0, 0, 'atlas', this.currentLayerIndex);
         this.selector.frameName = "selector.png"
         this.selector.visible = false
-        
+
+        this.marker = this.theGame.add.sprite(0, 0, 'atlas', this.currentLayerIndex)
+        this.marker.frameName = "marker.png"
+        this.marker.anchor.setTo(0)
+        this.theGame.input.addMoveCallback(this.updateMarker, this);
 
 
     }
@@ -421,6 +423,13 @@ class Game extends Phaser.State {
         }, this, 0, 0, 6, 6, this.currentLayerIndex)
 
         console.log(this.sourceBlock)
+    }
+
+    updateMarker() {
+
+        this.marker.x = this.layer1.getTileX(this.theGame.input.activePointer.worldX) * 64;
+        this.marker.y = this.layer1.getTileY(this.theGame.input.activePointer.worldY) * 64;
+    
     }
  
 }
