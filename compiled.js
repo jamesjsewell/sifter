@@ -49,6 +49,41 @@ var possibleConstructorReturn = function (self, call) {
   return call && (typeof call === "object" || typeof call === "function") ? call : self;
 };
 
+var LevelSelect = function () {
+    function LevelSelect(context) {
+        classCallCheck(this, LevelSelect);
+
+        this.context = context;
+        this.theGame = this.context.theGame;
+        this.create_level_select();
+    }
+
+    createClass(LevelSelect, [{
+        key: 'create_level_select',
+        value: function create_level_select() {
+            console.log(this.theGame);
+
+            this.lvl_select_bg = this.theGame.add.sprite(0, 0, 'atlas');
+            //this.lvl_select_bg.anchor.setTo(0.5)
+            this.lvl_select_bg.alignIn(this.theGame.camera.view, Phaser.BOTTOM_CENTER);
+            this.level1Button = this.theGame.add.button(this.width / 2, this.height / 2, "atlas", this.startGame, this, 'lvl2.png', 'lvl1.png');
+            this.level1Button.anchor.setTo(0.5);
+            this.level2Button = this.theGame.add.button(this.width / 2, this.height / 2, "atlas", this.startGame, this, 'lvl4.png', 'lvl3.png');
+            this.level2Button.anchor.setTo(-0.8, 0.5);
+            this.level3Button = this.theGame.add.button(this.width / 2, this.height / 2, "atlas", this.startGame, this, 'lvl6.png', 'lvl5.png');
+            this.level3Button.anchor.setTo(-2.1, 0.5);
+            this.level4Button = this.theGame.add.button(this.width / 2, this.height / 2, "atlas", this.startGame, this, 'lvl8.png', 'lvl7.png');
+            this.level4Button.anchor.setTo(-3.4, 0.5);
+            this.lvl_select_bg.addChild(this.level1Button);
+            this.lvl_select_bg.addChild(this.level2Button);
+            this.lvl_select_bg.addChild(this.level3Button);
+            this.lvl_select_bg.addChild(this.level4Button);
+            this.lvl_select_bg.frameName = "level_select_bg.png";
+        }
+    }]);
+    return LevelSelect;
+}();
+
 var MainMenu = function () {
     function MainMenu(context) {
         classCallCheck(this, MainMenu);
@@ -63,13 +98,13 @@ var MainMenu = function () {
     createClass(MainMenu, [{
         key: 'create_main_menu',
         value: function create_main_menu() {
-            console.log('the gamme', this.theGame);
-            console.log('creating main menu');
-            this.theGame.add.sprite(0, 0, 'menu_bg');
-            this.button = this.theGame.add.button(this.width / 2, this.height / 2, "atlas", this.startGame, this, 1, 0, 2);
+
+            this.button = this.theGame.add.button(this.width / 2, this.height / 2, "atlas", this.startGame, this, 'play_button2.png', 'play_button1.png');
             this.button.frameName = "play_button1.png";
             this.button.x = this.width / 2 - this.button.texture.frame.width / 2;
             this.button.y = this.height / 2 - this.button.texture.frame.height / 2;
+
+            this.levelSelect = new LevelSelect(this);
 
             //this.menu_features = new MainMenu(this)
         }
