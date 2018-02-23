@@ -7,8 +7,6 @@ class Game extends Phaser.State {
         this.h = this.theGame.height
         this.selectedTilesArray = []
         this.selected = false
-        this.connectedTiles = []
-        this.possibleBranches = []
         this.deadEnds = []
         this.alreadyMatched = []
         this.currentCell = null
@@ -32,10 +30,6 @@ class Game extends Phaser.State {
         this.theTileMap.forEach((tile)=>{
             
             if(tile.properties){
-            
-                // if(tile.properties.type === "connector"){
-                //     this.connectors.push(tile)
-                // }
 
                 if(tile.properties.type === "source"){
                     this.sourceBlock = tile
@@ -58,8 +52,6 @@ class Game extends Phaser.State {
 
     update() {
 
-
-
         
     }
 
@@ -80,15 +72,12 @@ class Game extends Phaser.State {
             
             }
         }
-
     }
 
     traversePath(currentCell){
 
         if(this.done === false){
-            console.log(currentCell)
-            
-            
+                
             var foundMatches = this.testConnections(currentCell, this.alreadyMatched)
 
             if(this.done === true){
@@ -96,19 +85,9 @@ class Game extends Phaser.State {
                 return
             }
             
-           
-            
             this.cycles = this.cycles + 1
 
-
-            if(this.deadEnds.includes(currentCell)){
-                console.log('in there')
-            }
-            console.log(this.deadEnds, currentCell)
-
             var foundMatches = this.testConnections(currentCell, this.alreadyMatched)
-
-            console.log(this.deadEnds, currentCell)
             
             if(!foundMatches){
              
@@ -118,47 +97,26 @@ class Game extends Phaser.State {
                     if(currentCell){
                         this.deadEnds.push(currentCell)
                     }
-                    //
+                    
                 }
                 else{
                     
                 }
                 
 
-                
-                // if(this.alreadyMatched.length <= 1){
-                //     currentCell = this.alreadyMatched[0]
-                // }
-                // else{
-                //     currentCell = this.alreadyMatched[this.alreadyMatched.length]
-                // }
-                // console.log(currentCell)
-
                 if(this.cycles < 20){
 
-                    console.log('well this is a dead end, now what?', currentCell)
-                    console.log(this.deadEnds)
                     if(this.alreadyMatched.length){
                         currentCell = this.alreadyMatched[this.alreadyMatched.length]
                         this.traversePath(currentCell)
                     }
                     
-    
                 }
                 else{
-                    console.log('cycle limit reached, dead end')
-                    
-                    // if(this.alreadyMatched.length){
-                    //     currentCell = this.alreadyMatched.length
-                    //     this.traversePath(currentCell)
-                    // }
-                    // this.alreadyMatched = []
-                    
-                    
+                    console.log('cycle limit reached, dead end')              
                 
                 }
                 
-            
             }
             else{
             
@@ -168,20 +126,16 @@ class Game extends Phaser.State {
                 if(foundMatches && foundMatches.length){
 
                     for(var i = 0; i <= foundMatches.length; i++){
-                    
 
-                            if(foundMatches[i]){
-                                currentCell = foundMatches[i]
-                            }
-                            
-    
-                    
+                        if(foundMatches[i]){
+                            currentCell = foundMatches[i]
+                        }
                     }  
 
                 }
 
                 if(currentCell){
-                    console.log(currentCell)
+                   
                     if(this.cycles < 20){
                         this.traversePath(currentCell)
                     }
@@ -193,7 +147,6 @@ class Game extends Phaser.State {
             
             }
         }
-
     
     }
 
@@ -307,28 +260,34 @@ class Game extends Phaser.State {
         var y = this.layer1.getTileY(this.theGame.input.activePointer.worldY);
         var tile = this.theTileMap.getTile(x, y, this.layer1);
 
-        if(!this.selectedTilesArray.length && tile && !tile.properties.isBorder){
+        if(!this.selectedTilesArray.length){
             
-            this.selectedTilesArray[0] = tile
-            this.selected = true
-        
-            this.create_selector(tile.worldX, tile.worldY)
-            return
+            if(tile.properties.type === "connector" || tile.properties.type === "blank"){
+                this.selectedTilesArray[0] = tile
+                this.selected = true
+            
+                this.create_selector(tile.worldX, tile.worldY)
+                return
+            }
         }
         
-        if(this.selected === true && !tile.properties.isBorder){
+        if(this.selected === true){
             if(!tile){
                 console.log('drop selection')
             }
 
             if(tile){
-                this.selectedTilesArray[1] = tile
                 
-                this.swap()
+                if(tile.properties.type === "connector" || tile.properties.type === "blank"){
+                
+                    this.selectedTilesArray[1] = tile
+                    
+                    this.swap()
 
-                this.remove_selector()
+                    this.remove_selector()
 
-                return
+                    return
+                }
             }
         }
         
@@ -342,6 +301,10 @@ class Game extends Phaser.State {
         var tile2 = this.selectedTilesArray[1] 
         var tile2Copy = new Phaser.Tile
 
+        var performSwap = true
+
+        
+
         for (var prop in tile2) {
             if (tile2.hasOwnProperty(prop)) {
                 tile2Copy[prop] = tile2[prop];
@@ -353,16 +316,21 @@ class Game extends Phaser.State {
                 tile1Copy[prop] = tile1[prop];
             }
         }
-       
-        this.theTileMap.putTile(tile1, tile2Copy.x, tile2Copy.y)
-        this.theTileMap.putTile(tile2Copy, tile1Copy.x, tile1Copy.y)
-        this.selectedTilesArray = []
-        this.selected = false
 
-        this.done = false
-        this.checkForRoadStart()
-    
-       
+        
+        console.log(tile1Copy.properties.type, tile2Copy.properties.type)
+        if(performSwap){
+
+            this.theTileMap.putTile(tile1, tile2Copy.x, tile2Copy.y)
+            this.theTileMap.putTile(tile2Copy, tile1Copy.x, tile1Copy.y)
+            this.selectedTilesArray = []
+            this.selected = false
+
+            this.done = false
+            this.checkForRoadStart()
+
+        }
+
     } 
 
     create_selector(x, y){
@@ -389,114 +357,5 @@ class Game extends Phaser.State {
 export default Game
 
 
-var connected = 0 
-        
-        
-
-        // for(var y = 0; y < 5; y++){
-
-
-        //     for(var x = 0; x < 5; x++){
-        
-        //         var theTile = this.theTileMap.getTile(x, y, 0)
-        //         var connectedTile = this.testConnections(theTile)
-
-        //         if(connectedTile){
-        //             this.connectedTiles.push(connectedTile)
-        //         }
-        //     }
-        
-        // }    
-        
-        // var xIndexTotal = 0
-        // var tilesAlongX = 0
-        // //var tilesAlongY = 0
-        // for(var xIndex = 1; xIndex < 5; xIndex++){
-            
-        //     for(var tileIndex in this.connectedTiles){
-        //         var tile = this.connectedTiles[tileIndex]
-                
-        //         if(tile.x === xIndex){
-        //             tilesAlongX = tilesAlongX + 1
-                    
-        //             break;
-        //         }
-
-        //     }
-            
-        // }
-
-
-        // var tileIndexesY = []
-        // for(var tileIndex in this.connectedTiles){
-        //     var tile = this.connectedTiles[tileIndex]
-
-        //     tileIndexesY.push(tile.y)
-
-    
-        // }
-
-        // var highestTile = Math.min(...tileIndexesY)
-        // var lowestTile = Math.max(...tileIndexesY)
-        // console.log(highestTile, lowestTile)
-
-
-        // var tilesConnectedOnY = 0
-
-        // for(var yIndex = highestTile; yIndex <= lowestTile; yIndex++){
-
-
-        //     for(var xIndex = 1; xIndex <=4; xIndex++){
-                
-        //         var testTile = this.testConnections(this.theTileMap.getTile(xIndex, yIndex, 0))
-              
-        //         if(!testTile){
-        //             var aboveTile = this.theTileMap.getTileAbove(0, xIndex, yIndex)
-        //             var belowTile = this.theTileMap.getTileBelow(0, xIndex, yIndex)
-
-        //             var testAboveTile = this.testConnections(aboveTile)
-                   
-        //             if(testAboveTile){
-        //                 var testAboveTileMultiple = this.testForMultipleConnections(aboveTile)
-        //             }
 
         
-        //             var testBelowTile = this.testConnections(belowTile)
-
-        //             if(testBelowTile || testAboveTile){
-        //                 var testBelowTileMultiple = this.testForMultipleConnections(belowTile)
-        //             }
-
-                    
-        //             if(testAboveTileMultiple > 1 || testBelowTileMultiple > 1){
-                        
-                        
-        //             }
-        //             else{
-        //                 tilesConnectedOnY = tilesConnectedOnY - 1
-        //             }
-        //         }
-
-        //         if(testTile){
-                    
-        //             tilesConnectedOnY = tilesConnectedOnY + 1
-        //             //break
-                    
-        //         }
-                
-        //         //tilesConnectedOnY = tilesConnectedOnY + 1
-                    
-                
-        //     }
-        // }
-        // console.log(tilesConnectedOnY)
-        
-        // if(tilesAlongX === 4 && tilesConnectedOnY >= 6){
-
-            
-        //     console.log('won')
-
-
-        // }
-
-        // //find range of y indexes

@@ -106,8 +106,6 @@ var Game = function (_Phaser$State) {
             this.h = this.theGame.height;
             this.selectedTilesArray = [];
             this.selected = false;
-            this.connectedTiles = [];
-            this.possibleBranches = [];
             this.deadEnds = [];
             this.alreadyMatched = [];
             this.currentCell = null;
@@ -131,10 +129,6 @@ var Game = function (_Phaser$State) {
             this.theTileMap.forEach(function (tile) {
 
                 if (tile.properties) {
-
-                    // if(tile.properties.type === "connector"){
-                    //     this.connectors.push(tile)
-                    // }
 
                     if (tile.properties.type === "source") {
                         _this2.sourceBlock = tile;
@@ -175,7 +169,6 @@ var Game = function (_Phaser$State) {
         value: function traversePath(currentCell) {
 
             if (this.done === false) {
-                console.log(currentCell);
 
                 var foundMatches = this.testConnections(currentCell, this.alreadyMatched);
 
@@ -186,14 +179,7 @@ var Game = function (_Phaser$State) {
 
                 this.cycles = this.cycles + 1;
 
-                if (this.deadEnds.includes(currentCell)) {
-                    console.log('in there');
-                }
-                console.log(this.deadEnds, currentCell);
-
                 var foundMatches = this.testConnections(currentCell, this.alreadyMatched);
-
-                console.log(this.deadEnds, currentCell);
 
                 if (!foundMatches) {
 
@@ -202,34 +188,16 @@ var Game = function (_Phaser$State) {
                         if (currentCell) {
                             this.deadEnds.push(currentCell);
                         }
-                        //
                     } else {}
-
-                    // if(this.alreadyMatched.length <= 1){
-                    //     currentCell = this.alreadyMatched[0]
-                    // }
-                    // else{
-                    //     currentCell = this.alreadyMatched[this.alreadyMatched.length]
-                    // }
-                    // console.log(currentCell)
 
                     if (this.cycles < 20) {
 
-                        console.log('well this is a dead end, now what?', currentCell);
-                        console.log(this.deadEnds);
                         if (this.alreadyMatched.length) {
                             currentCell = this.alreadyMatched[this.alreadyMatched.length];
                             this.traversePath(currentCell);
                         }
                     } else {
                         console.log('cycle limit reached, dead end');
-
-                        // if(this.alreadyMatched.length){
-                        //     currentCell = this.alreadyMatched.length
-                        //     this.traversePath(currentCell)
-                        // }
-                        // this.alreadyMatched = []
-
                     }
                 } else {
 
@@ -247,7 +215,7 @@ var Game = function (_Phaser$State) {
                     }
 
                     if (currentCell) {
-                        console.log(currentCell);
+
                         if (this.cycles < 20) {
                             this.traversePath(currentCell);
                         } else {
@@ -354,28 +322,34 @@ var Game = function (_Phaser$State) {
             var y = this.layer1.getTileY(this.theGame.input.activePointer.worldY);
             var tile = this.theTileMap.getTile(x, y, this.layer1);
 
-            if (!this.selectedTilesArray.length && tile && !tile.properties.isBorder) {
+            if (!this.selectedTilesArray.length) {
 
-                this.selectedTilesArray[0] = tile;
-                this.selected = true;
+                if (tile.properties.type === "connector" || tile.properties.type === "blank") {
+                    this.selectedTilesArray[0] = tile;
+                    this.selected = true;
 
-                this.create_selector(tile.worldX, tile.worldY);
-                return;
+                    this.create_selector(tile.worldX, tile.worldY);
+                    return;
+                }
             }
 
-            if (this.selected === true && !tile.properties.isBorder) {
+            if (this.selected === true) {
                 if (!tile) {
                     console.log('drop selection');
                 }
 
                 if (tile) {
-                    this.selectedTilesArray[1] = tile;
 
-                    this.swap();
+                    if (tile.properties.type === "connector" || tile.properties.type === "blank") {
 
-                    this.remove_selector();
+                        this.selectedTilesArray[1] = tile;
 
-                    return;
+                        this.swap();
+
+                        this.remove_selector();
+
+                        return;
+                    }
                 }
             }
         }
@@ -387,6 +361,8 @@ var Game = function (_Phaser$State) {
 
             var tile2 = this.selectedTilesArray[1];
             var tile2Copy = new Phaser.Tile();
+
+            var performSwap = true;
 
             for (var prop in tile2) {
                 if (tile2.hasOwnProperty(prop)) {
@@ -400,13 +376,17 @@ var Game = function (_Phaser$State) {
                 }
             }
 
-            this.theTileMap.putTile(tile1, tile2Copy.x, tile2Copy.y);
-            this.theTileMap.putTile(tile2Copy, tile1Copy.x, tile1Copy.y);
-            this.selectedTilesArray = [];
-            this.selected = false;
+            console.log(tile1Copy.properties.type, tile2Copy.properties.type);
+            if (performSwap) {
 
-            this.done = false;
-            this.checkForRoadStart();
+                this.theTileMap.putTile(tile1, tile2Copy.x, tile2Copy.y);
+                this.theTileMap.putTile(tile2Copy, tile1Copy.x, tile1Copy.y);
+                this.selectedTilesArray = [];
+                this.selected = false;
+
+                this.done = false;
+                this.checkForRoadStart();
+            }
         }
     }, {
         key: 'create_selector',
