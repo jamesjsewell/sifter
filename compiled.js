@@ -111,6 +111,7 @@ var Game = function (_Phaser$State) {
             this.currentCell = null;
             this.cycles = 0;
             this.done = false;
+            this.level = 1;
         }
     }, {
         key: 'preload',
@@ -120,9 +121,17 @@ var Game = function (_Phaser$State) {
         value: function create() {
             var _this2 = this;
 
-            this.theTileMap = this.theGame.add.tilemap('testing');
+            this.theTileMap = this.theGame.add.tilemap('map2');
             this.theTileMap.addTilesetImage('tiles');
-            this.layer1 = this.theTileMap.createLayer('base_layer');
+            this.layer1 = this.theTileMap.createLayer('level_1');
+
+            //this.layer2 = this.theTileMap.createLayer(1)
+            //this.theTileMap.setLayer(this.layer1)
+            this.currentLayerIndex = this.theTileMap.getLayer(this.theTileMap.currentLayer);
+            console.log(this.currentLayerIndex);
+
+            //this.layer1.resizeWorld();
+            //this.theTileMap.shuffle(1, 1, 4, 4, 0)
 
             this.theGame.input.onDown.add(this.getTileProperties, this);
 
@@ -132,7 +141,7 @@ var Game = function (_Phaser$State) {
 
                     if (tile.properties.type === "source") {
                         _this2.sourceBlock = tile;
-                        _this2.firstInChain = _this2.theTileMap.getTileRight(0, _this2.sourceBlock.x, _this2.sourceBlock.y);
+                        _this2.firstInChain = _this2.theTileMap.getTileRight(_this2.currentLayerIndex, _this2.sourceBlock.x, _this2.sourceBlock.y);
                     }
 
                     if (tile.properties.type === "destination") {
@@ -140,8 +149,6 @@ var Game = function (_Phaser$State) {
                     }
                 }
             }, this, 0, 0, 8, 8, 0);
-
-            this.checkForRoadStart();
         }
     }, {
         key: 'update',
@@ -152,7 +159,7 @@ var Game = function (_Phaser$State) {
     }, {
         key: 'checkForRoadStart',
         value: function checkForRoadStart() {
-            var startCell = this.theTileMap.getTileRight(0, this.sourceBlock.x, this.sourceBlock.y);
+            var startCell = this.theTileMap.getTileRight(this.currentLayerIndex, this.sourceBlock.x, this.sourceBlock.y);
             if (startCell) {
                 if (startCell.properties.left === true) {
                     this.currentCell = null;
@@ -301,6 +308,14 @@ var Game = function (_Phaser$State) {
 
                                 this.cycles = 0;
                                 this.done = true;
+
+                                if (this.level === 1) {
+                                    this.level = 2;
+                                } else {
+                                    this.level = 1;
+                                }
+
+                                this.change_level();
                                 return;
                             }
                         }
@@ -320,7 +335,7 @@ var Game = function (_Phaser$State) {
 
             var x = this.layer1.getTileX(this.theGame.input.activePointer.worldX);
             var y = this.layer1.getTileY(this.theGame.input.activePointer.worldY);
-            var tile = this.theTileMap.getTile(x, y, this.layer1);
+            var tile = this.theTileMap.getTile(x, y);
 
             if (!this.selectedTilesArray.length) {
 
@@ -339,7 +354,7 @@ var Game = function (_Phaser$State) {
                 }
 
                 if (tile) {
-
+                    console.log(tile.properties);
                     if (tile.properties.type === "connector" || tile.properties.type === "blank") {
 
                         this.selectedTilesArray[1] = tile;
@@ -357,10 +372,10 @@ var Game = function (_Phaser$State) {
         key: 'swap',
         value: function swap() {
             var tile1 = this.selectedTilesArray[0];
-            var tile1Copy = new Phaser.Tile();
+            var tile1Copy = new Phaser.Tile(this.currentLayerIndex);
 
             var tile2 = this.selectedTilesArray[1];
-            var tile2Copy = new Phaser.Tile();
+            var tile2Copy = new Phaser.Tile(this.currentLayerIndex);
 
             var performSwap = true;
 
@@ -377,9 +392,9 @@ var Game = function (_Phaser$State) {
             }
 
             if (performSwap) {
-
-                this.theTileMap.putTile(tile1, tile2Copy.x, tile2Copy.y);
-                this.theTileMap.putTile(tile2Copy, tile1Copy.x, tile1Copy.y);
+                console.log(tile2Copy.properties, tile1Copy.properties);
+                this.theTileMap.putTile(tile1, tile2Copy.x, tile2Copy.y, this.currentLayerIndex);
+                this.theTileMap.putTile(tile2Copy, tile1Copy.x, tile1Copy.y, this.currentLayerIndex);
                 this.selectedTilesArray = [];
                 this.selected = false;
 
@@ -391,7 +406,7 @@ var Game = function (_Phaser$State) {
         key: 'create_selector',
         value: function create_selector(x, y) {
             if (!this.selector) {
-                this.selector = this.theGame.add.sprite(x, y, 'atlas');
+                this.selector = this.theGame.add.sprite(x, y, 'atlas', this.currentLayerIndex);
                 this.selector.frameName = "selector.png";
             } else {
                 this.selector.x = x;
@@ -403,6 +418,24 @@ var Game = function (_Phaser$State) {
         key: 'remove_selector',
         value: function remove_selector() {
             this.selector.visible = false;
+        }
+    }, {
+        key: 'change_level',
+        value: function change_level() {
+
+            if (this.level === 1) {}
+
+            if (this.level === 2) {
+                console.log('shit');
+                this.layer1.destroy();
+                //this.theTileMap.removeAllLayers()
+
+                this.layer1 = this.theTileMap.createLayer('level_2');
+                this.layer1.exists = true;
+                this.theTileMap.setLayer(this.layer1);
+                this.currentLayerIndex = this.theTileMap.getLayer(this.theTileMap.currentLayer);
+                this.selector.bringToTop();
+            }
         }
     }]);
     return Game;
@@ -721,7 +754,8 @@ var Boot = function (_Phaser$State) {
     }, {
         key: "preload",
         value: function preload() {
-            this.theGame.load.tilemap('testing', 'assets/images/tilemap_2.json', null, Phaser.Tilemap.TILED_JSON);
+            this.theGame.load.tilemap('map2', 'assets/images/tilemap_2.json', null, Phaser.Tilemap.TILED_JSON);
+            this.theGame.load.tilemap('map3', 'assets/images/tilemap_3.json', null, Phaser.Tilemap.TILED_JSON);
             this.theGame.load.image('tiles', './assets/images/tilemap.png');
             this.theGame.load.atlas('atlas', 'assets/images/atlas.png', 'assets/images/atlas.json');
             this.theGame.load.image('button_bg', './assets/images/button_background.png');

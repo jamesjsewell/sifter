@@ -12,6 +12,7 @@ class Game extends Phaser.State {
         this.currentCell = null
         this.cycles = 0
         this.done = false
+        this.level = 1
     }
 
     preload() {
@@ -20,10 +21,18 @@ class Game extends Phaser.State {
     }
 
     create() {
-
-        this.theTileMap = this.theGame.add.tilemap('testing')
+      
+        this.theTileMap = this.theGame.add.tilemap('map2')
         this.theTileMap.addTilesetImage('tiles');
-        this.layer1 = this.theTileMap.createLayer('base_layer')
+        this.layer1 = this.theTileMap.createLayer('level_1')
+
+        //this.layer2 = this.theTileMap.createLayer(1)
+        //this.theTileMap.setLayer(this.layer1)
+        this.currentLayerIndex = this.theTileMap.getLayer(this.theTileMap.currentLayer)
+        console.log(this.currentLayerIndex)
+        
+        //this.layer1.resizeWorld();
+        //this.theTileMap.shuffle(1, 1, 4, 4, 0)
 
         this.theGame.input.onDown.add(this.getTileProperties, this);
 
@@ -33,7 +42,7 @@ class Game extends Phaser.State {
 
                 if(tile.properties.type === "source"){
                     this.sourceBlock = tile
-                    this.firstInChain = this.theTileMap.getTileRight(0, this.sourceBlock.x, this.sourceBlock.y)
+                    this.firstInChain = this.theTileMap.getTileRight(this.currentLayerIndex, this.sourceBlock.x, this.sourceBlock.y)
                 }
 
                 if(tile.properties.type === "destination"){
@@ -45,8 +54,8 @@ class Game extends Phaser.State {
         
         }, this, 0, 0, 8, 8,0)
 
+    
 
-        this.checkForRoadStart()
 
     }
 
@@ -60,7 +69,7 @@ class Game extends Phaser.State {
     }
 
     checkForRoadStart(){
-        var startCell = this.theTileMap.getTileRight(0, this.sourceBlock.x, this.sourceBlock.y)
+        var startCell = this.theTileMap.getTileRight(this.currentLayerIndex, this.sourceBlock.x, this.sourceBlock.y)
         if(startCell){
             if(startCell.properties.left === true){
                 this.currentCell = null
@@ -155,6 +164,8 @@ class Game extends Phaser.State {
         var matches = []
 
         if(theTile && theTile.properties){
+
+
                     
             var above = this.theTileMap.getTileAbove(0, theTile.x, theTile.y)
             var below = this.theTileMap.getTileBelow(0, theTile.x, theTile.y)
@@ -235,6 +246,15 @@ class Game extends Phaser.State {
                             
                             this.cycles = 0
                             this.done = true
+
+                            if(this.level === 1){
+                                this.level = 2
+                            }
+                            else{
+                                this.level = 1
+                            }
+                            
+                            this.change_level()
                             return
                         }
                     }  
@@ -258,7 +278,7 @@ class Game extends Phaser.State {
 
         var x = this.layer1.getTileX(this.theGame.input.activePointer.worldX);
         var y = this.layer1.getTileY(this.theGame.input.activePointer.worldY);
-        var tile = this.theTileMap.getTile(x, y, this.layer1);
+        var tile = this.theTileMap.getTile(x, y);
 
         if(!this.selectedTilesArray.length){
             
@@ -277,7 +297,7 @@ class Game extends Phaser.State {
             }
 
             if(tile){
-                
+                console.log(tile.properties)
                 if(tile.properties.type === "connector" || tile.properties.type === "blank"){
                 
                     this.selectedTilesArray[1] = tile
@@ -296,14 +316,12 @@ class Game extends Phaser.State {
 
     swap(){
         var tile1 = this.selectedTilesArray[0]
-        var tile1Copy = new Phaser.Tile
+        var tile1Copy = new Phaser.Tile(this.currentLayerIndex)
         
         var tile2 = this.selectedTilesArray[1] 
-        var tile2Copy = new Phaser.Tile
+        var tile2Copy = new Phaser.Tile(this.currentLayerIndex)
 
         var performSwap = true
-
-        
 
         for (var prop in tile2) {
             if (tile2.hasOwnProperty(prop)) {
@@ -319,9 +337,9 @@ class Game extends Phaser.State {
 
     
         if(performSwap){
-
-            this.theTileMap.putTile(tile1, tile2Copy.x, tile2Copy.y)
-            this.theTileMap.putTile(tile2Copy, tile1Copy.x, tile1Copy.y)
+            console.log(tile2Copy.properties, tile1Copy.properties)
+            this.theTileMap.putTile(tile1, tile2Copy.x, tile2Copy.y, this.currentLayerIndex)
+            this.theTileMap.putTile(tile2Copy, tile1Copy.x, tile1Copy.y, this.currentLayerIndex)
             this.selectedTilesArray = []
             this.selected = false
 
@@ -334,7 +352,7 @@ class Game extends Phaser.State {
 
     create_selector(x, y){
         if(!this.selector){
-            this.selector = this.theGame.add.sprite(x, y, 'atlas');
+            this.selector = this.theGame.add.sprite(x, y, 'atlas', this.currentLayerIndex);
             this.selector.frameName = "selector.png"
         }
         else{
@@ -349,6 +367,25 @@ class Game extends Phaser.State {
     
     remove_selector(){
         this.selector.visible = false
+    }
+
+    change_level(){
+
+        if(this.level === 1){
+           
+        }
+
+        if(this.level === 2){
+            console.log('shit')
+            this.layer1.destroy()
+            //this.theTileMap.removeAllLayers()
+
+            this.layer1 = this.theTileMap.createLayer('level_2')
+            this.layer1.exists = true
+            this.theTileMap.setLayer(this.layer1)
+            this.currentLayerIndex = this.theTileMap.getLayer(this.theTileMap.currentLayer)
+            this.selector.bringToTop()
+        }
     }
  
 }

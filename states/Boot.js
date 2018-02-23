@@ -20,7 +20,8 @@ class Boot extends Phaser.State {
     }
 
     preload() {
-        this.theGame.load.tilemap('testing', 'assets/images/tilemap_2.json', null, Phaser.Tilemap.TILED_JSON);
+        this.theGame.load.tilemap('map2', 'assets/images/tilemap_2.json', null, Phaser.Tilemap.TILED_JSON);
+        this.theGame.load.tilemap('map3', 'assets/images/tilemap_3.json', null, Phaser.Tilemap.TILED_JSON);
         this.theGame.load.image('tiles', './assets/images/tilemap.png');
         this.theGame.load.atlas('atlas', 'assets/images/atlas.png', 'assets/images/atlas.json');
         this.theGame.load.image('button_bg', './assets/images/button_background.png');
