@@ -79,7 +79,11 @@ class Game extends Phaser.State {
     
         this.gameTimer = this.theGame.time.events.loop(100, ()=>{this.updateTimer()} );
 
-
+        this.backButton = this.theGame.add.button(0, 0, "atlas", this.openMenu, this, 'menu_button2.png', 'menu_button1.png');
+        this.backButton.anchor.setTo(0.5)
+        this.backButton.alignIn(this.theGame.camera.view, Phaser.TOP_LEFT)
+        this.backButton.bringToTop()
+        console.log(this.backButton)
         
 
 
@@ -479,6 +483,10 @@ class Game extends Phaser.State {
         this.timeLabel.text = result;
         this.theGame.score = result
      
+    }
+
+    openMenu(){
+        this.theGame.state.start("GameMenu")
     }
  
 }
