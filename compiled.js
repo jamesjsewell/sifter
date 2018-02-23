@@ -232,7 +232,8 @@ var Game = function (_Phaser$State) {
             console.log(this.currentLayerIndex);
 
             //this.layer1.resizeWorld();
-            //this.theTileMap.shuffle(1, 1, 4, 4, this.currentLayerIndex)
+            // this.theTileMap.setPreventRecalculate(true)
+            // this.theTileMap.shuffle(1, 1, 4, 4, this.currentLayerIndex)
 
             this.theGame.input.onDown.add(this.getTileProperties, this);
 
@@ -259,6 +260,16 @@ var Game = function (_Phaser$State) {
             this.marker.frameName = "marker.png";
             this.marker.anchor.setTo(0);
             this.theGame.input.addMoveCallback(this.updateMarker, this);
+
+            this.startTime = new Date();
+            this.totalTime = 120;
+            this.timeElapsed = 0;
+
+            this.createTimer();
+
+            this.gameTimer = this.theGame.time.events.loop(100, function () {
+                _this2.updateTimer();
+            });
         }
     }, {
         key: 'update',
@@ -574,6 +585,41 @@ var Game = function (_Phaser$State) {
 
             this.marker.x = this.layer1.getTileX(this.theGame.input.activePointer.worldX) * 64;
             this.marker.y = this.layer1.getTileY(this.theGame.input.activePointer.worldY) * 64;
+        }
+    }, {
+        key: 'createTimer',
+        value: function createTimer() {
+
+            this.timeLabel = this.theGame.add.bitmapText(10, 100, 'gem', '00:00', 18);
+            this.timeLabel.alignIn(this.theGame.camera.view, Phaser.TOP_RIGHT);
+            this.timeLabel.anchor.setTo(0.5, 0);
+            this.timeLabel.align = 'center';
+        }
+    }, {
+        key: 'updateTimer',
+        value: function updateTimer() {
+
+            var currentTime = new Date();
+            var timeDifference = this.startTime.getTime() - currentTime.getTime();
+
+            //Time elapsed in seconds
+            this.timeElapsed = Math.abs(timeDifference / 1000);
+
+            //Time remaining in seconds
+            var timeRemaining = this.timeElapsed;
+
+            //Convert seconds into minutes and seconds
+            var minutes = Math.floor(timeRemaining / 60);
+            var seconds = Math.floor(timeRemaining) - 60 * minutes;
+
+            //Display minutes, add a 0 to the start if less than 10
+            var result = minutes < 10 ? "0" + minutes : minutes;
+
+            //Display seconds, add a 0 to the start if less than 10
+            result += seconds < 10 ? ":0" + seconds : ":" + seconds;
+
+            this.timeLabel.text = result;
+            this.theGame.score = result;
         }
     }]);
     return Game;
@@ -904,7 +950,8 @@ var LevelComplete = function (_Phaser$State) {
             this.lvl_select_bg.addChild(this.level3Button);
             this.lvl_select_bg.addChild(this.level4Button);
             this.lvl_select_bg.frameName = "level_select_bg.png";
-            this.scoreText = this.theGame.add.bitmapText(10, 100, 'gem', '1:00:30', 34);
+            this.scoreText = this.theGame.add.bitmapText(10, 100, 'gem', '00:00', 42);
+            this.scoreText.text = this.theGame.score;
             this.scoreText.alignIn(this.theGame.camera.view, Phaser.CENTER);
             this.nextButton = this.theGame.add.button(this.width / 2, this.height / 2, "atlas", this.next_level, this, 'next_button2.png', 'next_button1.png');
             this.nextButton.alignIn(this.theGame.camera.view, Phaser.TOP_CENTER);
