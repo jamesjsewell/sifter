@@ -447,7 +447,8 @@ var Game = function (_Phaser$State) {
 
                             if (rightProps.type === "destination") {
                                 console.log('donne');
-
+                                this.truck.x = this.destinationBlock.worldX;
+                                this.truck.y = this.destinationBlock.worldY;
                                 this.currentCell = null;
                                 this.alreadyMatched = [];
 
@@ -457,7 +458,8 @@ var Game = function (_Phaser$State) {
                                 //this.level = this.level + 1
 
                                 //this.change_level()
-                                this.theGame.state.start("LevelComplete");
+
+                                this.levelComplete();
                                 return;
                             }
                         }
@@ -647,6 +649,15 @@ var Game = function (_Phaser$State) {
         key: 'openMenu',
         value: function openMenu() {
             this.theGame.state.start("GameMenu");
+        }
+    }, {
+        key: 'levelComplete',
+        value: function levelComplete() {
+            var _this4 = this;
+
+            this.theGame.time.events.add(Phaser.Timer.SECOND, function () {
+                _this4.theGame.state.start("LevelComplete");
+            }, this);
         }
     }]);
     return Game;

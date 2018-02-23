@@ -150,7 +150,7 @@
             <key>data</key>
             <struct type="DataFile">
                 <key>name</key>
-                <filename>truck.json</filename>
+                <filename>environment.json</filename>
             </struct>
         </map>
         <key>multiPack</key>
@@ -205,6 +205,7 @@
             <key type="filename">environment/truck4.png</key>
             <key type="filename">environment/truck5.png</key>
             <key type="filename">environment/truck6.png</key>
+            <key type="filename">environment/truck7.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
