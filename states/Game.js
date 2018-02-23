@@ -86,6 +86,9 @@ class Game extends Phaser.State {
 
         this.truck = this.theGame.add.sprite(this.sourceBlock.worldX, this.sourceBlock.worldY, 'environment', this.currentLayerIndex);
         this.truck.frameName = "truck1.png"
+
+        this.truck.animations.add('truck');
+        this.truck.animations.play('truck', 30, true);
       
     
 

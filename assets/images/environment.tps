@@ -201,6 +201,10 @@
         <map type="IndividualSpriteSettingsMap">
             <key type="filename">environment/truck1.png</key>
             <key type="filename">environment/truck2.png</key>
+            <key type="filename">environment/truck3.png</key>
+            <key type="filename">environment/truck4.png</key>
+            <key type="filename">environment/truck5.png</key>
+            <key type="filename">environment/truck6.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
