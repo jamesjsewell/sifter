@@ -317,8 +317,7 @@ class Game extends Phaser.State {
             }
         }
 
-        
-        console.log(tile1Copy.properties.type, tile2Copy.properties.type)
+    
         if(performSwap){
 
             this.theTileMap.putTile(tile1, tile2Copy.x, tile2Copy.y)
