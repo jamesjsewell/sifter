@@ -1,3 +1,4 @@
+import PauseMenu from './menus/pause/pause_menu.js'
 
 class Game extends Phaser.State {
 
@@ -13,6 +14,8 @@ class Game extends Phaser.State {
         this.cycles = 0
         this.done = false
         this.level = this.theGame.theLevel
+
+        
     }
 
     preload() {
@@ -21,8 +24,7 @@ class Game extends Phaser.State {
     }
 
     create() {
-
-      
+    
         this.theTileMap = this.theGame.add.tilemap('map2')
         this.theTileMap.addTilesetImage('tiles');
         this.layer1 = this.theTileMap.createLayer(this.level)
@@ -58,7 +60,12 @@ class Game extends Phaser.State {
         
         }, this, 0, 0, 6, 6,this.currentLayerIndex)
 
-    
+        
+        
+        this.selector = this.theGame.add.sprite(0, 0, 'atlas', this.currentLayerIndex);
+        this.selector.frameName = "selector.png"
+        this.selector.visible = false
+        
 
 
     }
@@ -253,9 +260,10 @@ class Game extends Phaser.State {
                             this.cycles = 0
                             this.done = true
 
-                            this.level = this.level + 1
+                            //this.level = this.level + 1
                             
-                            this.change_level()
+                            //this.change_level()
+                            this.theGame.state.start("LevelComplete")
                             return
                         }
                     }  
@@ -316,6 +324,7 @@ class Game extends Phaser.State {
     }
 
     swap(){
+
         var tile1 = this.selectedTilesArray[0]
         var tile1Copy = new Phaser.Tile(this.currentLayerIndex)
         
@@ -352,14 +361,17 @@ class Game extends Phaser.State {
     } 
 
     create_selector(x, y){
-        if(!this.selector){
-            this.selector = this.theGame.add.sprite(x, y, 'atlas', this.currentLayerIndex);
-            this.selector.frameName = "selector.png"
-        }
-        else{
+
+        if(this.selector && x && y){
+            this.selector.bringToTop()
+            this.selector.z = 20
             this.selector.x = x
             this.selector.y = y
             this.selector.visible = true
+        }
+
+        else{
+            
         }
            
         

@@ -73,8 +73,24 @@
 	"sourceSize": {"w":64,"h":64}
 },
 {
+	"filename": "next_button1.png",
+	"frame": {"x":0,"y":208,"w":128,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":128,"h":64},
+	"sourceSize": {"w":128,"h":64}
+},
+{
+	"filename": "next_button2.png",
+	"frame": {"x":128,"y":208,"w":128,"h":64},
+	"rotated": false,
+	"trimmed": false,
+	"spriteSourceSize": {"x":0,"y":0,"w":128,"h":64},
+	"sourceSize": {"w":128,"h":64}
+},
+{
 	"filename": "play_button1.png",
-	"frame": {"x":0,"y":208,"w":128,"h":32},
+	"frame": {"x":0,"y":272,"w":128,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":128,"h":32},
@@ -82,7 +98,7 @@
 },
 {
 	"filename": "play_button2.png",
-	"frame": {"x":128,"y":208,"w":128,"h":32},
+	"frame": {"x":128,"y":272,"w":128,"h":32},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":128,"h":32},
@@ -90,7 +106,7 @@
 },
 {
 	"filename": "selector.png",
-	"frame": {"x":0,"y":240,"w":64,"h":64},
+	"frame": {"x":0,"y":304,"w":64,"h":64},
 	"rotated": false,
 	"trimmed": false,
 	"spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
@@ -101,8 +117,8 @@
 	"version": "1.0",
 	"image": "atlas.png",
 	"format": "RGBA8888",
-	"size": {"w":256,"h":304},
+	"size": {"w":256,"h":368},
 	"scale": "1",
-	"smartupdate": "$TexturePacker:SmartUpdate:2c587013419019786b70c1f90bfb8026:39c135238cbeb181bf76ce68c51a0a69:cbce6b53f0f49e0bf15173c25c41f876$"
+	"smartupdate": "$TexturePacker:SmartUpdate:979f986c3b201d6962bd925408970940:c9c76cc5d7ba3c544c159cbec5698d4f:cbce6b53f0f49e0bf15173c25c41f876$"
 }
 }

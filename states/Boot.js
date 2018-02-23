@@ -3,6 +3,7 @@ import Game from "./Game"
 import GameOver from "./GameOver"
 import Credits from "./Credits"
 import Options from "./Options"
+import LevelComplete from "./LevelComplete"
 
 class Boot extends Phaser.State {
 
@@ -53,10 +54,8 @@ class Boot extends Phaser.State {
         //  Register the keys.
 	    this.leftKey = this.theGame.input.keyboard.addKey(Phaser.Keyboard.LEFT);
 	    this.rightKey = this.theGame.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
-	    this.spaceKey = this.theGame.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-
-        //  Stop the following keys from propagating up to the browser
-        this.theGame.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.SPACEBAR ]);
+        this.spaceKey = this.theGame.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+    
 
         
     }
@@ -77,6 +76,7 @@ class Boot extends Phaser.State {
         this.theGame.state.add("GameOver",GameOver);
         this.theGame.state.add("Credits",Credits);
         this.theGame.state.add("Options",Options);
+        this.theGame.state.add("LevelComplete", LevelComplete)
 
         this.addedStates = true
 

@@ -250,6 +250,10 @@ var Game = function (_Phaser$State) {
                     }
                 }
             }, this, 0, 0, 6, 6, this.currentLayerIndex);
+
+            this.selector = this.theGame.add.sprite(0, 0, 'atlas', this.currentLayerIndex);
+            this.selector.frameName = "selector.png";
+            this.selector.visible = false;
         }
     }, {
         key: 'update',
@@ -412,9 +416,10 @@ var Game = function (_Phaser$State) {
                                 this.cycles = 0;
                                 this.done = true;
 
-                                this.level = this.level + 1;
+                                //this.level = this.level + 1
 
-                                this.change_level();
+                                //this.change_level()
+                                this.theGame.state.start("LevelComplete");
                                 return;
                             }
                         }
@@ -470,6 +475,7 @@ var Game = function (_Phaser$State) {
     }, {
         key: 'swap',
         value: function swap() {
+
             var tile1 = this.selectedTilesArray[0];
             var tile1Copy = new Phaser.Tile(this.currentLayerIndex);
 
@@ -504,14 +510,14 @@ var Game = function (_Phaser$State) {
     }, {
         key: 'create_selector',
         value: function create_selector(x, y) {
-            if (!this.selector) {
-                this.selector = this.theGame.add.sprite(x, y, 'atlas', this.currentLayerIndex);
-                this.selector.frameName = "selector.png";
-            } else {
+
+            if (this.selector && x && y) {
+                this.selector.bringToTop();
+                this.selector.z = 20;
                 this.selector.x = x;
                 this.selector.y = y;
                 this.selector.visible = true;
-            }
+            } else {}
         }
     }, {
         key: 'remove_selector',
@@ -850,6 +856,93 @@ var Options = function (_Phaser$State) {
     return Options;
 }(Phaser.State);
 
+var LevelComplete = function (_Phaser$State) {
+    inherits(LevelComplete, _Phaser$State);
+
+    function LevelComplete() {
+        classCallCheck(this, LevelComplete);
+        return possibleConstructorReturn(this, (LevelComplete.__proto__ || Object.getPrototypeOf(LevelComplete)).apply(this, arguments));
+    }
+
+    createClass(LevelComplete, [{
+        key: 'init',
+        value: function init() {
+            this.theGame = this.game.state.game;
+            this.score = this.theGame.completionTime;
+        }
+    }, {
+        key: 'preload',
+        value: function preload() {}
+    }, {
+        key: 'create',
+        value: function create() {
+
+            this.lvl_select_bg = this.theGame.add.sprite(0, 0, 'atlas');
+            this.lvl_select_bg.alignIn(this.theGame.camera.view, Phaser.BOTTOM_CENTER);
+            this.level1Button = this.theGame.add.button(this.width / 2, this.height / 2, "atlas", this.level1, this, 'lvl2.png', 'lvl1.png');
+            this.level1Button.anchor.setTo(0.5);
+            this.level2Button = this.theGame.add.button(this.width / 2, this.height / 2, "atlas", this.level2, this, 'lvl4.png', 'lvl3.png');
+            this.level2Button.anchor.setTo(-0.8, 0.5);
+            this.level3Button = this.theGame.add.button(this.width / 2, this.height / 2, "atlas", this.level3, this, 'lvl6.png', 'lvl5.png');
+            this.level3Button.anchor.setTo(-2.1, 0.5);
+            this.level4Button = this.theGame.add.button(this.width / 2, this.height / 2, "atlas", this.level4, this, 'lvl8.png', 'lvl7.png');
+            this.level4Button.anchor.setTo(-3.4, 0.5);
+            this.lvl_select_bg.addChild(this.level1Button);
+            this.lvl_select_bg.addChild(this.level2Button);
+            this.lvl_select_bg.addChild(this.level3Button);
+            this.lvl_select_bg.addChild(this.level4Button);
+            this.lvl_select_bg.frameName = "level_select_bg.png";
+            this.scoreText = this.theGame.add.bitmapText(10, 100, 'gem', '1:00:30', 34);
+            this.scoreText.alignIn(this.theGame.camera.view, Phaser.CENTER);
+            this.nextButton = this.theGame.add.button(this.width / 2, this.height / 2, "atlas", this.next_level, this, 'next_button2.png', 'next_button1.png');
+            this.nextButton.alignIn(this.theGame.camera.view, Phaser.TOP_CENTER);
+        }
+    }, {
+        key: 'level1',
+        value: function level1() {
+            this.startLevel(0);
+        }
+    }, {
+        key: 'level2',
+        value: function level2() {
+            this.startLevel(1);
+        }
+    }, {
+        key: 'level3',
+        value: function level3() {
+            this.startLevel(2);
+        }
+    }, {
+        key: 'level4',
+        value: function level4() {
+            this.startLevel(3);
+        }
+    }, {
+        key: 'next_level',
+        value: function next_level() {
+            console.log('next level');
+            if (this.theGame.theLevel < 4) {
+                this.theGame.theLevel = this.theGame.theLevel + 1;
+            }
+            if (this.theGame.theLevel === 4) {
+                this.theGame.theLevel = 0;
+            }
+
+            console.log(this.theGame.theLevel);
+
+            this.startLevel(this.theGame.theLevel);
+        }
+    }, {
+        key: 'startLevel',
+        value: function startLevel(lvl) {
+
+            this.theGame.theLevel = lvl;
+            this.theGame.state.start("Game");
+        }
+    }]);
+    return LevelComplete;
+}(Phaser.State);
+
 var Boot = function (_Phaser$State) {
     inherits(Boot, _Phaser$State);
 
@@ -909,9 +1002,6 @@ var Boot = function (_Phaser$State) {
             this.leftKey = this.theGame.input.keyboard.addKey(Phaser.Keyboard.LEFT);
             this.rightKey = this.theGame.input.keyboard.addKey(Phaser.Keyboard.RIGHT);
             this.spaceKey = this.theGame.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-
-            //  Stop the following keys from propagating up to the browser
-            this.theGame.input.keyboard.addKeyCapture([Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.SPACEBAR]);
         }
     }, {
         key: "update",
@@ -931,6 +1021,7 @@ var Boot = function (_Phaser$State) {
             this.theGame.state.add("GameOver", GameOver);
             this.theGame.state.add("Credits", Credits);
             this.theGame.state.add("Options", Options);
+            this.theGame.state.add("LevelComplete", LevelComplete);
 
             this.addedStates = true;
         }
