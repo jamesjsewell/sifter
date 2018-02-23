@@ -291,7 +291,8 @@ class Game extends Phaser.State {
                         
                         if(rightProps.type === "destination"){
                             console.log('donne')
-                           
+                            this.truck.x = this.destinationBlock.worldX
+                            this.truck.y = this.destinationBlock.worldY
                             this.currentCell = null
                             this.alreadyMatched = []
                             
@@ -301,7 +302,8 @@ class Game extends Phaser.State {
                             //this.level = this.level + 1
                             
                             //this.change_level()
-                            this.theGame.state.start("LevelComplete")
+                            
+                            this.levelComplete()
                             return
                         }
                     }  
@@ -506,6 +508,11 @@ class Game extends Phaser.State {
 
     openMenu(){
         this.theGame.state.start("GameMenu")
+    }
+
+    levelComplete(){
+     
+        this.theGame.time.events.add(Phaser.Timer.SECOND, ()=>{this.theGame.state.start("LevelComplete")}, this);
     }
  
 }
