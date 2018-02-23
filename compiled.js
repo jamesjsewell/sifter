@@ -64,7 +64,7 @@ var LevelSelect = function () {
 
             this.lvl_select_bg = this.theGame.add.sprite(0, 0, 'atlas');
 
-            this.lvl_select_bg.alignIn(this.theGame.camera.view, Phaser.BOTTOM_CENTER);
+            this.lvl_select_bg.alignIn(this.theGame.camera.view, Phaser.CENTER);
             this.level1Button = this.theGame.add.button(this.width / 2, this.height / 2, "atlas", this.level1, this, 'lvl2.png', 'lvl1.png');
             this.level1Button.anchor.setTo(0.5);
             this.level2Button = this.theGame.add.button(this.width / 2, this.height / 2, "atlas", this.level2, this, 'lvl4.png', 'lvl3.png');
@@ -122,20 +122,20 @@ var MainMenu = function () {
     }
 
     createClass(MainMenu, [{
-        key: 'create_main_menu',
+        key: "create_main_menu",
         value: function create_main_menu() {
 
-            this.button = this.theGame.add.button(this.width / 2, this.height / 2, "atlas", this.startGame, this, 'play_button2.png', 'play_button1.png');
-            this.button.frameName = "play_button1.png";
-            this.button.x = this.width / 2 - this.button.texture.frame.width / 2;
-            this.button.y = this.height / 2 - this.button.texture.frame.height / 2;
+            // this.button = this.theGame.add.button(this.width/2, this.height/2, "atlas", this.startGame, this, 'play_button2.png', 'play_button1.png');
+            // this.button.frameName = "play_button1.png"
+            // this.button.x = this.width/2 - (this.button.texture.frame.width/2) 
+            // this.button.y = this.height/2 - (this.button.texture.frame.height/2)
 
             this.levelSelect = new LevelSelect(this);
 
             //this.menu_features = new MainMenu(this)
         }
     }, {
-        key: 'startGame',
+        key: "startGame",
         value: function startGame() {
             //console.log('starting game')
             this.theGame.state.start("Game");

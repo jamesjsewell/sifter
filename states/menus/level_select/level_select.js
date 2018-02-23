@@ -12,7 +12,7 @@ class LevelSelect {
         
         this.lvl_select_bg = this.theGame.add.sprite(0, 0, 'atlas')
       
-        this.lvl_select_bg.alignIn(this.theGame.camera.view, Phaser.BOTTOM_CENTER)
+        this.lvl_select_bg.alignIn(this.theGame.camera.view, Phaser.CENTER)
         this.level1Button = this.theGame.add.button(this.width/2, this.height/2, "atlas", this.level1, this, 'lvl2.png', 'lvl1.png');
         this.level1Button.anchor.setTo(0.5)
         this.level2Button = this.theGame.add.button(this.width/2, this.height/2, "atlas", this.level2, this, 'lvl4.png', 'lvl3.png');
