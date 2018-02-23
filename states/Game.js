@@ -1,4 +1,4 @@
-import PauseMenu from './menus/pause/pause_menu.js'
+
 
 class Game extends Phaser.State {
 
