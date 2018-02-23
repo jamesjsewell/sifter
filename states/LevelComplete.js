@@ -28,7 +28,8 @@ class LevelComplete extends Phaser.State {
         this.lvl_select_bg.addChild(this.level3Button);
         this.lvl_select_bg.addChild(this.level4Button);
         this.lvl_select_bg.frameName = "level_select_bg.png"
-        this.scoreText = this.theGame.add.bitmapText(10, 100, 'gem','1:00:30',34);
+        this.scoreText = this.theGame.add.bitmapText(10, 100, 'gem','00:00',42);
+        this.scoreText.text = this.theGame.score
         this.scoreText.alignIn(this.theGame.camera.view, Phaser.CENTER)
         this.nextButton = this.theGame.add.button(this.width/2, this.height/2, "atlas", this.next_level, this, 'next_button2.png', 'next_button1.png');
         this.nextButton.alignIn(this.theGame.camera.view, Phaser.TOP_CENTER)
