@@ -12,7 +12,7 @@ class Game extends Phaser.State {
         this.currentCell = null
         this.cycles = 0
         this.done = false
-        this.level = 1
+        this.level = this.theGame.theLevel
     }
 
     preload() {
@@ -21,14 +21,18 @@ class Game extends Phaser.State {
     }
 
     create() {
+
       
         this.theTileMap = this.theGame.add.tilemap('map2')
         this.theTileMap.addTilesetImage('tiles');
-        this.layer1 = this.theTileMap.createLayer('level_1')
+        this.layer1 = this.theTileMap.createLayer(this.level)
+        this.layer1.exists = true
+        this.theTileMap.setLayer(this.layer1)
+        this.currentLayerIndex = this.theTileMap.getLayer(this.theTileMap.currentLayer)
 
         //this.layer2 = this.theTileMap.createLayer(1)
         //this.theTileMap.setLayer(this.layer1)
-        this.currentLayerIndex = this.theTileMap.getLayer(this.theTileMap.currentLayer)
+        this.currentLayerIndex = this.level
         console.log(this.currentLayerIndex)
         
         //this.layer1.resizeWorld();
@@ -249,12 +253,7 @@ class Game extends Phaser.State {
                             this.cycles = 0
                             this.done = true
 
-                            if(this.level === 1){
-                                this.level = 2
-                            }
-                            else{
-                                this.level = 1
-                            }
+                            this.level = this.level + 1
                             
                             this.change_level()
                             return
@@ -373,19 +372,14 @@ class Game extends Phaser.State {
 
     change_level(){
 
-        if(this.level === 1){
-           
-        }
+        this.layer1.destroy()
 
-        if(this.level === 2){
-            this.layer1.destroy()
-            this.layer1 = this.theTileMap.createLayer('level_2')
-            this.layer1.exists = true
-            this.theTileMap.setLayer(this.layer1)
-            this.currentLayerIndex = this.theTileMap.getLayer(this.theTileMap.currentLayer)
-            console.log(this.currentLayerIndex)
-            this.selector.bringToTop()
-        }
+        this.layer1 = this.theTileMap.createLayer(this.level)
+    
+        this.layer1.exists = true
+        this.theTileMap.setLayer(this.layer1)
+        this.currentLayerIndex = this.theTileMap.getLayer(this.theTileMap.currentLayer)
+        this.selector.bringToTop()
 
         this.selectedTilesArray = []
         this.selected = false
