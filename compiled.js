@@ -222,6 +222,7 @@ var Game = function (_Phaser$State) {
             this.theTileMap = this.theGame.add.tilemap('map2');
             this.theTileMap.addTilesetImage('tiles');
             this.layer1 = this.theTileMap.createLayer(this.level);
+            this.trucks = this.theGame.add.group();
             this.layer1.exists = true;
             this.theTileMap.setLayer(this.layer1);
             this.currentLayerIndex = this.theTileMap.getLayer(this.theTileMap.currentLayer);
@@ -234,6 +235,7 @@ var Game = function (_Phaser$State) {
             //this.layer1.resizeWorld();
             // this.theTileMap.setPreventRecalculate(true)
             // this.theTileMap.shuffle(1, 1, 4, 4, this.currentLayerIndex)
+
 
             this.theGame.input.onDown.add(this.getTileProperties, this);
 
@@ -281,6 +283,9 @@ var Game = function (_Phaser$State) {
 
             this.truck.animations.add('truck');
             this.truck.animations.play('truck', 30, true);
+
+            // this.theTileMap.shuffle(1, 1, 4, 4, this.currentLayerIndex)
+
         }
     }, {
         key: 'update',
@@ -295,27 +300,49 @@ var Game = function (_Phaser$State) {
             var startCell = this.theTileMap.getTileRight(this.currentLayerIndex, this.sourceBlock.x, this.sourceBlock.y);
 
             if (startCell) {
-                if (startCell.properties.left === true) {
-                    this.currentCell = null;
-                    this.alreadyMatched = [];
-                    this.deadEnds = [];
-                    this.alreadyMatched[0] = startCell;
-                    this.cycles = 0;
-                    this.traversePath(startCell);
-                }
+                // if(startCell.properties.left === true){
+                this.currentCell = null;
+                this.alreadyMatched = [];
+                this.deadEnds = [];
+                this.alreadyMatched[0] = startCell;
+                this.cycles = 0;
+                this.traversePath(startCell);
             }
         }
     }, {
         key: 'traversePath',
         value: function traversePath(currentCell) {
+            var _this3 = this;
+
+            this.trucks.forEach(function (truck) {
+
+                if (truck) {
+
+                    var x = _this3.layer1.getTileX(truck.x);
+                    var y = _this3.layer1.getTileY(truck.y);
+                    var tileUnderneath = _this3.theTileMap.getTile(x, y, _this3.layer1);
+                    if (tileUnderneath.properties.type === "connector" && _this3.alreadyMatched.includes(tileUnderneath)) {
+                        return;
+                    } else {
+                        truck.destroy();
+                    }
+                }
+            }, this);
 
             if (currentCell) {
-                if (currentCell.worldY && currentCell.worldX) {
 
-                    if (currentCell.properties && currentCell.properties.type === "connector") {
-                        this.truck.x = currentCell.worldX;
-                        this.truck.y = currentCell.worldY;
-                    }
+                if (currentCell.properties.type === 'connector') {
+                    var theTile = currentCell;
+
+                    var truck = this.theGame.add.sprite(this.sourceBlock.worldX, this.sourceBlock.worldY, 'environment', this.currentLayerIndex);
+                    truck.frameName = "truck1.png";
+
+                    truck.animations.add('truck');
+                    truck.animations.play('truck', 30, true);
+                    truck.x = theTile.worldX;
+                    truck.y = theTile.worldY;
+
+                    this.trucks.add(truck);
                 }
             }
 
@@ -567,7 +594,7 @@ var Game = function (_Phaser$State) {
     }, {
         key: 'change_level',
         value: function change_level() {
-            var _this3 = this;
+            var _this4 = this;
 
             this.layer1.destroy();
 
@@ -591,12 +618,12 @@ var Game = function (_Phaser$State) {
                 if (tile.properties) {
 
                     if (tile.properties.type === "source") {
-                        _this3.sourceBlock = tile;
-                        _this3.firstInChain = _this3.theTileMap.getTileRight(_this3.currentLayerIndex, _this3.sourceBlock.x, _this3.sourceBlock.y);
+                        _this4.sourceBlock = tile;
+                        _this4.firstInChain = _this4.theTileMap.getTileRight(_this4.currentLayerIndex, _this4.sourceBlock.x, _this4.sourceBlock.y);
                     }
 
                     if (tile.properties.type === "destination") {
-                        _this3.destinationBlock = tile;
+                        _this4.destinationBlock = tile;
                     }
                 }
             }, this, 0, 0, 6, 6, this.currentLayerIndex);
@@ -653,10 +680,10 @@ var Game = function (_Phaser$State) {
     }, {
         key: 'levelComplete',
         value: function levelComplete() {
-            var _this4 = this;
+            var _this5 = this;
 
             this.theGame.time.events.add(Phaser.Timer.SECOND, function () {
-                _this4.theGame.state.start("LevelComplete");
+                _this5.theGame.state.start("LevelComplete");
             }, this);
         }
     }]);

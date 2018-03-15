@@ -14,6 +14,7 @@ class Game extends Phaser.State {
         this.cycles = 0
         this.done = false
         this.level = this.theGame.theLevel
+       
 
         
     }
@@ -24,14 +25,16 @@ class Game extends Phaser.State {
     }
 
     create() {
-    
+        
+       
         this.theTileMap = this.theGame.add.tilemap('map2')
         this.theTileMap.addTilesetImage('tiles');
         this.layer1 = this.theTileMap.createLayer(this.level)
+        this.trucks = this.theGame.add.group()
         this.layer1.exists = true
         this.theTileMap.setLayer(this.layer1)
         this.currentLayerIndex = this.theTileMap.getLayer(this.theTileMap.currentLayer)
-
+        
         //this.layer2 = this.theTileMap.createLayer(1)
         //this.theTileMap.setLayer(this.layer1)
         this.currentLayerIndex = this.level
@@ -40,6 +43,7 @@ class Game extends Phaser.State {
         //this.layer1.resizeWorld();
         // this.theTileMap.setPreventRecalculate(true)
         // this.theTileMap.shuffle(1, 1, 4, 4, this.currentLayerIndex)
+        
 
         this.theGame.input.onDown.add(this.getTileProperties, this);
 
@@ -90,6 +94,7 @@ class Game extends Phaser.State {
         this.truck.animations.add('truck');
         this.truck.animations.play('truck', 30, true);
       
+        // this.theTileMap.shuffle(1, 1, 4, 4, this.currentLayerIndex)
     
 
 
@@ -109,7 +114,7 @@ class Game extends Phaser.State {
         var startCell = this.theTileMap.getTileRight(this.currentLayerIndex, this.sourceBlock.x, this.sourceBlock.y)
        
         if(startCell){
-            if(startCell.properties.left === true){
+            // if(startCell.properties.left === true){
                 this.currentCell = null
                 this.alreadyMatched = []
                 this.deadEnds = []
@@ -117,22 +122,51 @@ class Game extends Phaser.State {
                 this.cycles = 0
                 this.traversePath(startCell)
             
-            }
+            
         }
     }
 
     traversePath(currentCell){
 
-        if(currentCell){
-            if(currentCell.worldY && currentCell.worldX){
 
-                if(currentCell.properties && currentCell.properties.type === "connector"){
-                    this.truck.x = currentCell.worldX
-                    this.truck.y = currentCell.worldY
+        this.trucks.forEach((truck)=>{
+            
+            if(truck){
+                
+                var x = this.layer1.getTileX(truck.x)
+                var y = this.layer1.getTileY(truck.y)
+                var tileUnderneath = this.theTileMap.getTile(x, y, this.layer1)
+                if(tileUnderneath.properties.type === "connector" && this.alreadyMatched.includes(tileUnderneath)){
+                    return
+                }
+                else{
+                    truck.destroy()
                 }
             }
+        
+        }, this)
+
+        
+        if(currentCell){
+
+            if(currentCell.properties.type === 'connector'){
+                var theTile = currentCell
+
+                var truck = this.theGame.add.sprite(this.sourceBlock.worldX, this.sourceBlock.worldY, 'environment', this.currentLayerIndex);
+                truck.frameName = "truck1.png"
+
+                truck.animations.add('truck');
+                truck.animations.play('truck', 30, true);
+                truck.x = theTile.worldX
+                truck.y = theTile.worldY
+        
+                this.trucks.add(truck)
+            }
             
+
         }
+        
+        
         
 
         if(this.done === false){
